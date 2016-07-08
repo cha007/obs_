@@ -31,6 +31,96 @@
     <ClInclude Include="Source\nvmain.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="OBSApi\APIInterface.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\VolumeControl.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\OBSApi.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\ColorControl.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\AudioFilter.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\AudioSource.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\GraphicsSystem.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\HotkeyControlEx.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\resource.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Scene.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\SettingsPane.h">
+      <Filter>OBSApi</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XMath.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XString.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XT.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XT_Windows.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XTLocalization.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Alloc.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\ComPtr.hpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\ConfigFile.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\DebugAlloc.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Defs.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\FastAlloc.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Inline.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Profiler.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\RAIIHelpers.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Serializer.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\Template.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\utf8.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XConfig.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="OBSApi\Utility\XFile.h">
+      <Filter>OBSApi\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur">
@@ -105,6 +195,12 @@
       <UniqueIdentifier>{a2d93ce3-630d-408d-8a9e-89dc2532938e}</UniqueIdentifier>
       <Extensions>pShader;vShader</Extensions>
     </Filter>
+    <Filter Include="OBSApi">
+      <UniqueIdentifier>{2c6b86a4-87f1-4b0b-bfe8-d7308a420a77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBSApi\Utility">
+      <UniqueIdentifier>{254aa542-cb33-4012-b546-e00a24278466}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OBS.rc">
@@ -174,6 +270,66 @@
     </ClCompile>
     <ClCompile Include="Source\cudaDynload.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Scene.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\VolumeControl.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\APIDefs.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\ColorControl.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\AudioSource.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\GraphicsSystem.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\OBSApi.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\SettingsPane.cpp">
+      <Filter>OBSApi</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XMath.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XString.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XT.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XT_Windows.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XTLocalization.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\ConfigFile.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\DebugAlloc.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\FastAlloc.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\Profiler.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\utf8-windows.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XConfig.cpp">
+      <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\Utility\XFile_Windows.cpp">
+      <Filter>OBSApi\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -30,6 +30,7 @@
 //-----------------------------------------
 //defines
 //-----------------------------------------
+#define NO_IMPORT
 #if defined(NO_IMPORT)
     #define BASE_EXPORT
 #elif !defined(BASE_EXPORTING)

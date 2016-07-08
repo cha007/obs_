@@ -120,10 +120,9 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/ignore:4049 /ignore:4217 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>crypt32.lib;Avrt.lib;dwmapi.lib;comctl32.lib;dxgi.lib;dxguid.lib;d3d10_1.lib;d3dx10.lib;ws2_32.lib;Iphlpapi.lib;Winmm.lib;librtmp.lib;libmp3lame-static.lib;libfaac.lib;dsound.lib;obsapi.lib;shell32.lib;gdiplus.lib;mfplat.lib;Mfuuid.lib;Winhttp.lib;libx264.lib;UxTheme.lib;Xinput9_1_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;libsamplerate.lib;crypt32.lib;Avrt.lib;dwmapi.lib;comctl32.lib;dxgi.lib;dxguid.lib;d3d10_1.lib;d3dx10.lib;ws2_32.lib;Iphlpapi.lib;Winmm.lib;librtmp.lib;libmp3lame-static.lib;libfaac.lib;dsound.lib;shell32.lib;gdiplus.lib;mfplat.lib;Mfuuid.lib;Winhttp.lib;libx264.lib;UxTheme.lib;Xinput9_1_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Version>
       </Version>
-      <AdditionalLibraryDirectories>OBSApi/Debug;x264/libs/32bit;librtmp/debug;lame/output/32bit;libfaac/debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalManifestDependencies>type=%27win32%27 name=%27Microsoft.Windows.Common-Controls%27 version=%276.0.0.0%27 processorArchitecture=%27X86%27 publicKeyToken=%276595b64144ccf1df%27 language=%27*%27;%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>rundir\pdb32\$(TargetName).pdb</ProgramDatabaseFile>
@@ -133,6 +132,7 @@
       <LargeAddressAware>true</LargeAddressAware>
       <MinimumRequiredVersion>6.0</MinimumRequiredVersion>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>libsamplerate/debug;x264/libs/32bit;librtmp/debug;lame/output/32bit;libfaac/debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(ProjectName).exe rundir</Command>
@@ -270,6 +270,36 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OBSApi\APIInterface.h" />
+    <ClInclude Include="OBSApi\AudioFilter.h" />
+    <ClInclude Include="OBSApi\AudioSource.h" />
+    <ClInclude Include="OBSApi\ColorControl.h" />
+    <ClInclude Include="OBSApi\GraphicsSystem.h" />
+    <ClInclude Include="OBSApi\HotkeyControlEx.h" />
+    <ClInclude Include="OBSApi\OBSApi.h" />
+    <ClInclude Include="OBSApi\resource.h" />
+    <ClInclude Include="OBSApi\Scene.h" />
+    <ClInclude Include="OBSApi\SettingsPane.h" />
+    <ClInclude Include="OBSApi\Utility\Alloc.h" />
+    <ClInclude Include="OBSApi\Utility\ComPtr.hpp" />
+    <ClInclude Include="OBSApi\Utility\ConfigFile.h" />
+    <ClInclude Include="OBSApi\Utility\DebugAlloc.h" />
+    <ClInclude Include="OBSApi\Utility\Defs.h" />
+    <ClInclude Include="OBSApi\Utility\FastAlloc.h" />
+    <ClInclude Include="OBSApi\Utility\Inline.h" />
+    <ClInclude Include="OBSApi\Utility\Profiler.h" />
+    <ClInclude Include="OBSApi\Utility\RAIIHelpers.h" />
+    <ClInclude Include="OBSApi\Utility\Serializer.h" />
+    <ClInclude Include="OBSApi\Utility\Template.h" />
+    <ClInclude Include="OBSApi\Utility\utf8.h" />
+    <ClInclude Include="OBSApi\Utility\XConfig.h" />
+    <ClInclude Include="OBSApi\Utility\XFile.h" />
+    <ClInclude Include="OBSApi\Utility\XMath.h" />
+    <ClInclude Include="OBSApi\Utility\XString.h" />
+    <ClInclude Include="OBSApi\Utility\XT.h" />
+    <ClInclude Include="OBSApi\Utility\XTLocalization.h" />
+    <ClInclude Include="OBSApi\Utility\XT_Windows.h" />
+    <ClInclude Include="OBSApi\VolumeControl.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\cudaDynload.h" />
     <ClInclude Include="Source\DataPacketHelpers.h" />
@@ -305,6 +335,26 @@
     <ResourceCompile Include="OBS.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OBSApi\APIDefs.cpp" />
+    <ClCompile Include="OBSApi\AudioSource.cpp" />
+    <ClCompile Include="OBSApi\ColorControl.cpp" />
+    <ClCompile Include="OBSApi\GraphicsSystem.cpp" />
+    <ClCompile Include="OBSApi\OBSApi.cpp" />
+    <ClCompile Include="OBSApi\Scene.cpp" />
+    <ClCompile Include="OBSApi\SettingsPane.cpp" />
+    <ClCompile Include="OBSApi\Utility\ConfigFile.cpp" />
+    <ClCompile Include="OBSApi\Utility\DebugAlloc.cpp" />
+    <ClCompile Include="OBSApi\Utility\FastAlloc.cpp" />
+    <ClCompile Include="OBSApi\Utility\Profiler.cpp" />
+    <ClCompile Include="OBSApi\Utility\utf8-windows.cpp" />
+    <ClCompile Include="OBSApi\Utility\XConfig.cpp" />
+    <ClCompile Include="OBSApi\Utility\XFile_Windows.cpp" />
+    <ClCompile Include="OBSApi\Utility\XMath.cpp" />
+    <ClCompile Include="OBSApi\Utility\XString.cpp" />
+    <ClCompile Include="OBSApi\Utility\XT.cpp" />
+    <ClCompile Include="OBSApi\Utility\XTLocalization.cpp" />
+    <ClCompile Include="OBSApi\Utility\XT_Windows.cpp" />
+    <ClCompile Include="OBSApi\VolumeControl.cpp" />
     <ClCompile Include="Source\API.cpp" />
     <ClCompile Include="Source\BandwidthAnalysis.cpp" />
     <ClCompile Include="Source\BlankAudioPlayback.cpp" />
