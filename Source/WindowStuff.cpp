@@ -38,325 +38,23 @@ extern WNDPROC listviewProc;
 
 void STDCALL SceneHotkey(DWORD hotkey, UPARAM param, bool bDown);
 
-enum
-{
-    ID_LISTBOX_REMOVE = 1,
-    ID_LISTBOX_MOVEUP,
-    ID_LISTBOX_MOVEDOWN,
-    ID_LISTBOX_MOVETOTOP,
-    ID_LISTBOX_MOVETOBOTTOM,
-    ID_LISTBOX_CENTER,
-    ID_LISTBOX_CENTERHOR,
-    ID_LISTBOX_CENTERVER,
-    ID_LISTBOX_MOVELEFT,
-    ID_LISTBOX_MOVETOP,
-    ID_LISTBOX_MOVERIGHT,
-    ID_LISTBOX_MOVEBOTTOM,
-    ID_LISTBOX_FITTOSCREEN,
-    ID_LISTBOX_RESETSIZE,
-    ID_LISTBOX_RESETCROP,
-    ID_LISTBOX_RENAME,
-    ID_LISTBOX_COPY,
-    ID_LISTBOX_HOTKEY,
-    ID_LISTBOX_CONFIG,
-
-    // Render frame related.
-    ID_TOGGLERENDERVIEW,
-    ID_TOGGLEPANEL,
-    ID_TOGGLEFULLSCREEN,
-    ID_PREVIEWSCALETOFITMODE,
-    ID_PREVIEW1TO1MODE,
-
-    ID_LISTBOX_ADD,
-
-    ID_LISTBOX_GLOBALSOURCE=5000,
-    ID_PROJECTOR=6000,
-    ID_LISTBOX_COPYTO=7000,
-};
-
-INT_PTR CALLBACK OBS::EnterSceneCollectionDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-        case WM_INITDIALOG:
-            {
-                SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-                LocalizeWindow(hwnd);
-
-                String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-                SetWindowText(GetDlgItem(hwnd, IDC_NAME), strOut);
-
-                return true;
-            }
-
-        case WM_COMMAND:
-            switch (LOWORD(wParam))
-            {
-                case IDOK:
-                    {
-                        String str;
-                        str.SetLength((UINT)SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXTLENGTH, 0, 0));
-                        if (!str.Length())
-                        {
-                            OBSMessageBox(hwnd, Str("EnterName"), NULL, 0);
-                            break;
-                        }
-
-                        SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXT, str.Length()+1, (LPARAM)str.Array());
-
-                        String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-
-                        String strSceneCollectionPath;
-                        strSceneCollectionPath << lpAppDataPath << TEXT("\\sceneCollection\\") << str << TEXT(".xconfig");
-
-                        if (OSFileExists(strSceneCollectionPath))
-                        {
-                            String strExists = Str("NameExists");
-                            strExists.FindReplace(TEXT("$1"), str);
-                            OBSMessageBox(hwnd, strExists, NULL, 0);
-                            break;
-                        }
-
-                        strOut = str;
-                    }
-
-                case IDCANCEL:
-                    EndDialog(hwnd, LOWORD(wParam));
-                    break;
-            }
-    }
-
+INT_PTR CALLBACK OBS::EnterSceneCollectionDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     return false;
 }
 
-INT_PTR CALLBACK OBS::EnterProfileDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-        case WM_INITDIALOG:
-            {
-                SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-                LocalizeWindow(hwnd);
-
-                String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-                SetWindowText(GetDlgItem(hwnd, IDC_NAME), strOut);
-
-                return true;
-            }
-
-        case WM_COMMAND:
-            switch (LOWORD(wParam))
-            {
-                case IDOK:
-                    {
-                        String str;
-                        str.SetLength((UINT)SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXTLENGTH, 0, 0));
-                        if (!str.Length())
-                        {
-                            OBSMessageBox(hwnd, Str("EnterName"), NULL, 0);
-                            break;
-                        }
-
-                        SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXT, str.Length()+1, (LPARAM)str.Array());
-
-                        String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-
-                        String strProfilePath;
-                        strProfilePath << lpAppDataPath << TEXT("\\profiles\\") << str << TEXT(".ini");
-
-                        if (OSFileExists(strProfilePath))
-                        {
-                            String strExists = Str("NameExists");
-                            strExists.FindReplace(TEXT("$1"), str);
-                            OBSMessageBox(hwnd, strExists, NULL, 0);
-                            break;
-                        }
-
-                        strOut = str;
-                    }
-
-                case IDCANCEL:
-                    EndDialog(hwnd, LOWORD(wParam));
-                    break;
-            }
-    }
-
+INT_PTR CALLBACK OBS::EnterProfileDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     return false;
 }
 
-INT_PTR CALLBACK OBS::EnterSourceNameDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch(message)
-    {
-        case WM_INITDIALOG:
-            {
-                SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-                LocalizeWindow(hwnd);
-
-                String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-                SetWindowText(GetDlgItem(hwnd, IDC_NAME), strOut);
-
-                //SetFocus(GetDlgItem(hwnd, IDC_NAME));
-                return TRUE;
-            }
-
-        case WM_COMMAND:
-            switch(LOWORD(wParam))
-            {
-                case IDOK:
-                    {
-                        String str;
-                        str.SetLength((UINT)SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXTLENGTH, 0, 0));
-                        if(!str.Length())
-                        {
-                            OBSMessageBox(hwnd, Str("EnterName"), NULL, 0);
-                            break;
-                        }
-
-                        SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXT, str.Length()+1, (LPARAM)str.Array());
-
-                        String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-
-                        if(App->sceneElement)
-                        {
-                            XElement *sources = App->sceneElement->GetElement(TEXT("sources"));
-                            if(!sources)
-                                sources = App->sceneElement->CreateElement(TEXT("sources"));
-
-                            XElement *foundSource = sources->GetElement(str);
-                            if(foundSource != NULL && strOut != foundSource->GetName())
-                            {
-                                String strExists = Str("NameExists");
-                                strExists.FindReplace(TEXT("$1"), str);
-                                OBSMessageBox(hwnd, strExists, NULL, 0);
-                                break;
-                            }
-                        }
-
-                        strOut = str;
-                    }
-
-                case IDCANCEL:
-                    EndDialog(hwnd, LOWORD(wParam));
-                    break;
-            }
-    }
-
+INT_PTR CALLBACK OBS::EnterSourceNameDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     return 0;
 }
 
-INT_PTR CALLBACK OBS::SceneHotkeyDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch(message)
-    {
-        case WM_INITDIALOG:
-            {
-                SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-                LocalizeWindow(hwnd);
-
-                SceneHotkeyInfo *hotkeyInfo = (SceneHotkeyInfo*)lParam;
-                SendMessage(GetDlgItem(hwnd, IDC_HOTKEY), HKM_SETHOTKEY, hotkeyInfo->hotkey, 0);
-
-                return TRUE;                    
-            }
-
-        case WM_COMMAND:
-            switch(LOWORD(wParam))
-            {
-                case IDC_CLEAR:
-                    if(HIWORD(wParam) == BN_CLICKED)
-                        SendMessage(GetDlgItem(hwnd, IDC_HOTKEY), HKM_SETHOTKEY, 0, 0);
-                    break;
-
-                case IDOK:
-                    {
-                        SceneHotkeyInfo *hotkeyInfo = (SceneHotkeyInfo*)GetWindowLongPtr(hwnd, DWLP_USER);
-
-                        DWORD hotkey = (DWORD)SendMessage(GetDlgItem(hwnd, IDC_HOTKEY), HKM_GETHOTKEY, 0, 0);
-
-                        if(hotkey == hotkeyInfo->hotkey)
-                        {
-                            EndDialog(hwnd, IDCANCEL);
-                            break;
-                        }
-
-                        if(hotkey)
-                        {
-                            XElement *scenes = API->GetSceneListElement();
-                            UINT numScenes = scenes->NumElements();
-                            for(UINT i=0; i<numScenes; i++)
-                            {
-                                XElement *sceneElement = scenes->GetElementByID(i);
-                                if(sceneElement->GetInt(TEXT("hotkey")) == hotkey)
-                                {
-                                    OBSMessageBox(hwnd, Str("Scene.Hotkey.AlreadyInUse"), NULL, 0);
-                                    return 0;
-                                }
-                            }
-                        }
-
-                        hotkeyInfo->hotkey = hotkey;
-                    }
-
-                case IDCANCEL:
-                    EndDialog(hwnd, LOWORD(wParam));
-                    break;
-            }
-    }
-
+INT_PTR CALLBACK OBS::SceneHotkeyDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     return 0;
 }
 
-INT_PTR CALLBACK OBS::EnterSceneNameDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch(message)
-    {
-        case WM_INITDIALOG:
-            {
-                SetWindowLongPtr(hwnd, DWLP_USER, (LONG_PTR)lParam);
-                LocalizeWindow(hwnd);
-
-                String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-                SetWindowText(GetDlgItem(hwnd, IDC_NAME), strOut);
-
-                return TRUE;
-            }
-
-        case WM_COMMAND:
-            switch(LOWORD(wParam))
-            {
-                case IDOK:
-                    {
-                        String str;
-                        str.SetLength((UINT)SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXTLENGTH, 0, 0));
-                        if(!str.Length())
-                        {
-                            OBSMessageBox(hwnd, Str("EnterName"), NULL, 0);
-                            break;
-                        }
-
-                        SendMessage(GetDlgItem(hwnd, IDC_NAME), WM_GETTEXT, str.Length()+1, (LPARAM)str.Array());
-
-                        String &strOut = *(String*)GetWindowLongPtr(hwnd, DWLP_USER);
-
-                        XElement *scenes = App->scenesConfig.GetElement(TEXT("scenes"));
-                        XElement *foundScene = scenes->GetElement(str);
-                        if(foundScene != NULL && strOut != foundScene->GetName())
-                        {
-                            String strExists = Str("NameExists");
-                            strExists.FindReplace(TEXT("$1"), str);
-                            OBSMessageBox(hwnd, strExists, NULL, 0);
-                            break;
-                        }
-
-                        strOut = str;
-                    }
-
-                case IDCANCEL:
-                    EndDialog(hwnd, LOWORD(wParam));
-                    break;
-            }
-    }
+INT_PTR CALLBACK OBS::EnterSceneNameDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     return 0;
 }
 
@@ -464,9 +162,8 @@ struct ReconnectInfo
     UINT secondsLeft;
 };
 
-INT_PTR CALLBACK OBS::ReconnectDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch(message)
+INT_PTR CALLBACK OBS::ReconnectDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
+   /* switch(message)
     {
         case WM_INITDIALOG:
             {
@@ -550,6 +247,7 @@ INT_PTR CALLBACK OBS::ReconnectDialogProc(HWND hwnd, UINT message, WPARAM wParam
                 delete ri;
             }
     }
+*/
 
     return FALSE;
 }

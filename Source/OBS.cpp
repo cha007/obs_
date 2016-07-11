@@ -394,23 +394,13 @@ OBS::~OBS()
  */
 void OBS::UpdateRenderViewMessage()
 {
-    if(bRunning)
-    {
-        if(bRenderViewEnabled)
-        {
-//             // Message should be invisible
-//             ShowWindow(hwndRenderMessage, SW_HIDE);
+    if(bRunning){
+        if(bRenderViewEnabled){
         }
-        else
-        {
-//             ShowWindow(hwndRenderMessage, SW_SHOW);
-//             SetWindowText(hwndRenderMessage, Str("MainWindow.PreviewDisabled"));
+        else{
         }
     }
-    else
-    {
-//         ShowWindow(hwndRenderMessage, SW_SHOW);
-//         SetWindowText(hwndRenderMessage, Str("MainWindow.BeginMessage"));
+    else{
     }
 }
 
@@ -526,11 +516,11 @@ void OBS::GetBaseSize(UINT &width, UINT &height) const
         if(monitorID >= 1)
             monitorID = 0;
 
-		int defCX = 1920;// screenRect.right - screenRect.left;
-		int defCY = 1080;// screenRect.bottom - screenRect.top;
+		int defCX = 1920;
+		int defCY = 1080;
 
-		width = 1920;// AppConfig->GetInt(TEXT("Video"), TEXT("BaseWidth"), defCX);
-		height = 1080;// AppConfig->GetInt(TEXT("Video"), TEXT("BaseHeight"), defCY);
+		width  = 1920;
+		height = 1080;
     }
 }
 
@@ -544,9 +534,7 @@ void OBS::GetProfiles(StringList &profileList)
     HANDLE hFind;
 
     profileList.Clear();
-
     String profileDir(FormattedString(L"%s/profiles/", OBSGetAppDataPath()));
-
     strProfilesWildcard << profileDir << "*.ini";
 
     if(hFind = OSFindFirstFile(strProfilesWildcard, ofd))

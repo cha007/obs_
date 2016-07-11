@@ -16,6 +16,7 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 ********************************************************************************/
 
+//http://www.cutv.com/demo/live_test.swf
 
 #include "Main.h"
 #include "RTMPStuff.h"
