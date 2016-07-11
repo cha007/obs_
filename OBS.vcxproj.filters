@@ -37,9 +37,6 @@
     <ClInclude Include="OBSApi\OBSApi.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
-    <ClInclude Include="OBSApi\ColorControl.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
     <ClInclude Include="OBSApi\AudioFilter.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
@@ -47,9 +44,6 @@
       <Filter>OBSApi</Filter>
     </ClInclude>
     <ClInclude Include="OBSApi\GraphicsSystem.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
-    <ClInclude Include="OBSApi\HotkeyControlEx.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
     <ClInclude Include="OBSApi\resource.h">
@@ -240,9 +234,6 @@
       <Filter>OBSApi</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\APIDefs.cpp">
-      <Filter>OBSApi</Filter>
-    </ClCompile>
-    <ClCompile Include="OBSApi\ColorControl.cpp">
       <Filter>OBSApi</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\AudioSource.cpp">

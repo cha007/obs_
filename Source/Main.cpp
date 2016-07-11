@@ -21,69 +21,19 @@ OBS         *App            = NULL;
 bool        bStreamOnStart  = false;
 TCHAR       lpAppPath[MAX_PATH];
 TCHAR       lpAppDataPath[MAX_PATH];
-
 //----------------------------
 void InitSockets();
 void TerminateSockets();
 
-HANDLE hOBSMutex = NULL;
-
-typedef DWORD (WINAPI *GETFILEVERSIONINFOSIZEWPROC)(LPCWSTR module, LPDWORD unused);
-typedef BOOL (WINAPI *GETFILEVERSIONINFOWPROC)(LPCWSTR module, DWORD unused, DWORD len, LPVOID data);
-typedef BOOL (WINAPI *VERQUERYVALUEWPROC)(LPVOID data, LPCWSTR subblock, LPVOID *buf, PUINT sizeout);
-
-void InvertPre47Scenes()
-{
-    String strScenesPath;
-    strScenesPath << lpAppDataPath << TEXT("\\scenes.xconfig");
-
-    XConfig scenesConfig;
-    if(scenesConfig.Open(strScenesPath))
-    {
-        XElement *scenes = scenesConfig.GetElement(TEXT("scenes"));
-        if(!scenes)
-            return;
-
-        UINT numScenes = scenes->NumElements();
-        for(UINT i=0; i<numScenes; i++)
-        {
-            XElement *scene = scenes->GetElementByID(i);
-            XElement *sources = scene->GetElement(TEXT("sources"));
-            if(!sources)
-                continue;
-
-            sources->ReverseOrder();
-        }
-
-        scenesConfig.Close(true);
-    }
-}
-
-String FindSceneCollection(String scenecollection)
-{
-    String result = FormattedString(L"%s\\sceneCollection\\%s.xconfig", lpAppDataPath, scenecollection.Array());
-    if (OSFileExists(result))
-        return result;
-
-    return String();
-}
-
 void SetupIni(CTSTR profile)
 {
     //first, find out which profile we're using
-
     String strProfile = profile ? profile : GlobalConfig->GetString(TEXT("General"), TEXT("Profile"));
     DWORD lastVersion = GlobalConfig->GetInt(TEXT("General"), TEXT("LastAppVersion"));
     String strIni;
 
-    if (profile)
-        GlobalConfig->SetString(TEXT("General"), TEXT("Profile"), profile);
-
-    //--------------------------------------------
-    // 0.47a fix (invert sources in all scenes)
-
-    if(lastVersion < 0x470)
-        InvertPre47Scenes();
+	if (profile)
+		GlobalConfig->SetString(TEXT("General"), TEXT("Profile"), profile);
 
     //--------------------------------------------
     // try to find and open the file, otherwise use the first one available
@@ -196,75 +146,8 @@ void LoadGlobalIni()
     }
 }
 
-void WINAPI ProcessEvents()
-{
-    MSG msg;
-    while(PeekMessage(&msg, NULL, 0, 0, 1))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-}
-
-int HasSSE2Support ()
-{
-    int cpuInfo[4];
-
-    __cpuid(cpuInfo, 1);
-
-    return (cpuInfo[3] & (1<<26)) != 0;
-}
-
-typedef BOOL (WINAPI *getUserModeExceptionProc)(LPDWORD);
-typedef BOOL (WINAPI *setUserModeExceptionProc)(DWORD);
-
-void InitializeExceptionHandler()
-{
-    HMODULE k32;
-
-    //fix for exceptions being swallowed inside callbacks (see KB976038)
-    k32 = GetModuleHandle(TEXT("KERNEL32"));
-    if (k32)
-    {
-        DWORD dwFlags;
-        getUserModeExceptionProc procGetProcessUserModeExceptionPolicy;
-        setUserModeExceptionProc procSetProcessUserModeExceptionPolicy;
-
-        procGetProcessUserModeExceptionPolicy = (getUserModeExceptionProc)GetProcAddress(k32, "GetProcessUserModeExceptionPolicy");
-        procSetProcessUserModeExceptionPolicy = (setUserModeExceptionProc)GetProcAddress(k32, "SetProcessUserModeExceptionPolicy");
-
-        if (procGetProcessUserModeExceptionPolicy && procSetProcessUserModeExceptionPolicy)
-        {
-            if (procGetProcessUserModeExceptionPolicy(&dwFlags))
-                procSetProcessUserModeExceptionPolicy(dwFlags & ~1);
-        }
-    }
-}
-
-void SetWorkingFolder(void)
-{
-    String modulePath;
-
-    if (GetFileAttributes(TEXT("locale\\en.txt")) != INVALID_FILE_ATTRIBUTES)
-        return;
-
-    modulePath.SetLength(MAX_PATH);
-
-    if (GetModuleFileName(NULL, modulePath, modulePath.Length()-1))
-    {
-        TCHAR *p;
-
-        p = srchr(modulePath, '\\');
-        if (p)
-            *p = 0;
-        
-        SetCurrentDirectory(modulePath);
-    }
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    LPWSTR profile = NULL;
     LPWSTR sceneCollection = NULL;
     //------------------------------------------------------------
 
@@ -274,93 +157,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         InitSockets();
         CoInitialize(0);
 
-        //always make sure we're running inside our app folder so that locale files and plugins work
-        SetWorkingFolder();
-
         //get current working dir
         {
             String strDirectory;
             UINT dirSize = GetCurrentDirectory(0, 0);
             strDirectory.SetLength(dirSize);
             GetCurrentDirectory(dirSize, strDirectory.Array());
-
             scpy(lpAppPath, strDirectory);
-        }
 
-        TSTR lpAllocator = NULL;
-
-        {			
+			TSTR lpAllocator = NULL;		
 			SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, lpAppDataPath);
 			scat_n(lpAppDataPath, TEXT("\\OBS"), 4);            
 
             if(!OSFileExists(lpAppDataPath) && !OSCreateDirectory(lpAppDataPath))
                 CrashError(TEXT("Couldn't create directory '%s'"), lpAppDataPath);
 
-            String strAppDataPath = lpAppDataPath;
-            String strProfilesPath = strAppDataPath + TEXT("\\profiles");
-            if(!OSFileExists(strProfilesPath) && !OSCreateDirectory(strProfilesPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strProfilesPath.Array());
-
-            String strSceneCollectionPath = strAppDataPath + TEXT("\\sceneCollection");
-            if (!OSFileExists(strSceneCollectionPath) && !OSCreateDirectory(strSceneCollectionPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strSceneCollectionPath.Array());
-
-            String strLogsPath = strAppDataPath + TEXT("\\logs");
-            if(!OSFileExists(strLogsPath) && !OSCreateDirectory(strLogsPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strLogsPath.Array());
-
-            String strCrashPath = strAppDataPath + TEXT("\\crashDumps");
-            if(!OSFileExists(strCrashPath) && !OSCreateDirectory(strCrashPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strCrashPath.Array());
-
-            String strPluginDataPath = strAppDataPath + TEXT("\\pluginData");
-            if(!OSFileExists(strPluginDataPath) && !OSCreateDirectory(strPluginDataPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strPluginDataPath.Array());
-
-            String strUpdatePath = strAppDataPath + TEXT("\\updates");
-            if(!OSFileExists(strUpdatePath) && !OSCreateDirectory(strUpdatePath))
-                CrashError(TEXT("Couldn't create directory '%s'"), strUpdatePath.Array());
-
-            String servicesPath = strAppDataPath + L"\\services";
-            if (!OSFileExists(servicesPath) && !OSCreateDirectory(servicesPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), servicesPath.Array());
-
-            LoadGlobalIni();
-
-            String strAllocator = GlobalConfig->GetString(TEXT("General"), TEXT("Allocator"));
-            if(strAllocator.IsValid())
-            {
-                UINT size = strAllocator.DataLength();
-                lpAllocator = (TSTR)malloc(size);
-                mcpy(lpAllocator, strAllocator.Array(), size);
-            }
-        }
-
-        if(lpAllocator)
-        {
-            delete GlobalConfig;
-
-            ResetXTAllocator(lpAllocator);
-            free(lpAllocator);
-
             LoadGlobalIni();
         }
-        //--------------------------------------------
-
-        GlobalConfig->SetString(TEXT("General"), TEXT("LastAppDirectory"), lpAppPath);
-
-        //--------------------------------------------
 
         AppConfig = new ConfigFile;
-        SetupIni(profile);
-        //--------------------------------------------
-
-        String strCaptureHookLog;
-        strCaptureHookLog << lpAppDataPath << L"\\pluginData\\captureHookLog.txt";
+        SetupIni(NULL);
         
-        OSFileChangeData *pGCHLogMF = NULL;
-        pGCHLogMF = OSMonitorFileStart (strCaptureHookLog, true);
-
         App = new OBS;
         MSG msg;
         while(GetMessage(&msg, NULL, 0, 0)){
@@ -372,34 +189,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         delete AppConfig;
         delete GlobalConfig;
         TerminateSockets();
-
-        bool skipGCHLog = false;
-
-        if(pGCHLogMF)
-        {
-            if(!OSFileHasChanged(pGCHLogMF))
-                skipGCHLog = true;
-
-            OSMonitorFileDestroy(pGCHLogMF);
-        }
-
-        //FIXME: File monitoring needs fixing.  Half the time game capture logs are not
-        //getting attached even when users clearly used it.
-        if(true) //!skipGCHLog)
-        {
-            XFile captureHookLog;
-
-            if (captureHookLog.Open(strCaptureHookLog, XFILE_READ|XFILE_SHARED, XFILE_OPENEXISTING))
-            {
-                String strContents;
-                captureHookLog.ReadFileToString(strContents);
-                LogRaw(L"\r\n\r\nLast game capture log:");
-                LogRaw(strContents.Array(), strContents.Length());
-            }
-        }
     }
 
     TerminateXT();
-    CloseHandle(hOBSMutex);
     return 0;
 }

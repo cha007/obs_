@@ -273,9 +273,7 @@
     <ClInclude Include="OBSApi\APIInterface.h" />
     <ClInclude Include="OBSApi\AudioFilter.h" />
     <ClInclude Include="OBSApi\AudioSource.h" />
-    <ClInclude Include="OBSApi\ColorControl.h" />
     <ClInclude Include="OBSApi\GraphicsSystem.h" />
-    <ClInclude Include="OBSApi\HotkeyControlEx.h" />
     <ClInclude Include="OBSApi\OBSApi.h" />
     <ClInclude Include="OBSApi\resource.h" />
     <ClInclude Include="OBSApi\Scene.h" />
@@ -327,7 +325,6 @@
   <ItemGroup>
     <ClCompile Include="OBSApi\APIDefs.cpp" />
     <ClCompile Include="OBSApi\AudioSource.cpp" />
-    <ClCompile Include="OBSApi\ColorControl.cpp" />
     <ClCompile Include="OBSApi\GraphicsSystem.cpp" />
     <ClCompile Include="OBSApi\OBSApi.cpp" />
     <ClCompile Include="OBSApi\Scene.cpp" />
