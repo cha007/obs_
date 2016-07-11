@@ -313,7 +313,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur" />
-    <None Include="rundir\shaders\SceneTransition.pShader" />
     <None Include="ui\mic2-muted.ico" />
     <None Include="ui\mic2.ico" />
     <None Include="ui\speaker-muted.ico" />
@@ -321,15 +320,6 @@
     <None Include="ui\test2\recording.ico" />
     <None Include="ui\test2\test.ico" />
     <None Include="ui\test2\test48.ico" />
-    <None Include="rundir\shaders\DownscaleYUV1.5.pShader" />
-    <None Include="rundir\shaders\DownscaleYUV2.25.pShader" />
-    <None Include="rundir\shaders\DownscaleYUV2.pShader" />
-    <None Include="rundir\shaders\DownscaleYUV3.pShader" />
-    <None Include="rundir\shaders\DrawSolid.pShader" />
-    <None Include="rundir\shaders\DrawSolid.vShader" />
-    <None Include="rundir\shaders\DrawTexture.pShader" />
-    <None Include="rundir\shaders\DrawTexture.vShader" />
-    <None Include="rundir\shaders\DrawYUVTexture.pShader" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OBS.rc" />

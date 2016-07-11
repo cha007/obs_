@@ -1,26 +1,5 @@
-/********************************************************************************
- Copyright (C) 2012 Hugh Bailey <obs.jim@gmail.com>
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-********************************************************************************/
-
-
 #include "Main.h"
 #include <intrin.h>
-
-void SetupSceneCollection(CTSTR scenecollection);
 
 //primarily main window stuff an initialization/destruction code
 
@@ -63,19 +42,6 @@ BOOL CALLBACK MonitorInfoEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprc
     monitors << MonitorInfo(hMonitor, lprcMonitor);
     return TRUE;
 }
-
-const int controlPadding = 3;
-
-const int totalControlAreaWidth  = minClientWidth - 10;
-const int miscAreaWidth = 290;
-const int totalControlAreaHeight = 171;//170;//
-const int listAreaWidth = totalControlAreaWidth-miscAreaWidth;
-const int controlWidth = miscAreaWidth/2;
-const int controlHeight = 22;
-const int volControlHeight = 32;
-const int volMeterHeight = 10;
-const int textControlHeight = 16;
-const int listControlWidth = listAreaWidth/2;
 
 Scene* STDCALL CreateNormalScene(XElement *data)
 {
@@ -335,8 +301,6 @@ OBS::OBS()
         OBSMessageBox(hwndMain, TEXT("Webroot Secureanywhere appears to be active.  This product will cause problems with OBS as the security features block OBS from accessing Windows GDI functions.  It is highly recommended that you disable Secureanywhere and restart OBS.\r\n\r\nOf course you can always just ignore this message if you want, but it may prevent you from being able to stream certain things. Please do not report any bugs you may encounter if you leave Secureanywhere enabled."), TEXT("Just a slight issue you might want to be aware of"), MB_OK);
 
     CheckPermissionsAndDiskSpace();
-
-    ResizeWindow(false);
     ShowWindow(hwndMain, SW_SHOW);
 
     renderFrameIn1To1Mode = !!GlobalConfig->GetInt(L"General", L"1to1Preview", false);
@@ -570,42 +534,7 @@ void OBS::GetBaseSize(UINT &width, UINT &height) const
     }
 }
 
-void OBS::ResizeWindow(bool bRedrawRenderFrame)
-{
-    //ResizeRenderFrame(bRedrawRenderFrame);
-
-    //-----------------------------------------------------
-
-    DWORD flags = SWP_NOOWNERZORDER|SWP_SHOWWINDOW;
-
-    int xStart = clientWidth/2 - totalControlAreaWidth/2 + (controlPadding/2 + 1);
-    int yStart = clientHeight - totalControlAreaHeight;
-
-    int xPos = xStart;
-    int yPos = yStart;
-
-    //-----------------------------------------------------
-
-    HWND hwndTemp = GetDlgItem(hwndMain, ID_STATUS);
-    SendMessage(hwndTemp, WM_SIZE, SIZE_RESTORED, 0);
-
-    int parts[5];
-    parts[4] = -1;
-    parts[3] = clientWidth-100;
-    parts[2] = parts[3]-60;
-    parts[1] = parts[2]-170;
-    parts[0] = parts[1]-170;
-    SendMessage(hwndTemp, SB_SETPARTS, 5, (LPARAM)parts);
-
-    int resetXPos = xStart+listControlWidth*2;
-
-    //-----------------------------------------------------
-
-    UpdateRenderViewMessage();
-    SetWindowPos(hwndRenderMessage, NULL, 0, renderFrameCtrlHeight / 2 - 10, renderFrameCtrlWidth, 50, flags & ~SWP_SHOWWINDOW);
-
-    //-----------------------------------------------------
-	return;
+void OBS::ResizeWindow(bool bRedrawRenderFrame){
 }
 
 void OBS::GetProfiles(StringList &profileList)

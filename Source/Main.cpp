@@ -28,42 +28,6 @@ void TerminateSockets();
 
 HANDLE hOBSMutex = NULL;
 
-BOOL LoadSeDebugPrivilege()
-{
-    DWORD   err;
-    HANDLE  hToken;
-    LUID    Val;
-    TOKEN_PRIVILEGES tp;
-
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
-    {
-        err = GetLastError();
-        return FALSE;
-    }
-
-    if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &Val))
-    {
-        err = GetLastError();
-        CloseHandle(hToken);
-        return FALSE;
-    }
-
-    tp.PrivilegeCount = 1;
-    tp.Privileges[0].Luid = Val;
-    tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-
-    if (!AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof (tp), NULL, NULL))
-    {
-        err = GetLastError();
-        CloseHandle(hToken);
-        return FALSE;
-    }
-
-    CloseHandle(hToken);
-
-    return TRUE;
-}
-
 typedef DWORD (WINAPI *GETFILEVERSIONINFOSIZEWPROC)(LPCWSTR module, LPDWORD unused);
 typedef BOOL (WINAPI *GETFILEVERSIONINFOWPROC)(LPCWSTR module, DWORD unused, DWORD len, LPVOID data);
 typedef BOOL (WINAPI *VERQUERYVALUEWPROC)(LPVOID data, LPCWSTR subblock, LPVOID *buf, PUINT sizeout);
@@ -102,43 +66,6 @@ String FindSceneCollection(String scenecollection)
         return result;
 
     return String();
-}
-
-void SetupSceneCollection(CTSTR scenecollection)
-{
-    String strSceneCollection = scenecollection ? scenecollection : GlobalConfig->GetString(TEXT("General"), TEXT("SceneCollection"));
-    String strXconfig;
-
-    if (scenecollection)
-        GlobalConfig->SetString(TEXT("General"), TEXT("SceneCollection"), scenecollection);
-
-    if (!strSceneCollection.IsValid() || FindSceneCollection(strSceneCollection).IsEmpty())
-    {
-        OSFindData ofd;
-
-        strXconfig.Clear() << lpAppDataPath << TEXT("\\sceneCollection\\*.xconfig");
-        HANDLE hFind = OSFindFirstFile(strXconfig, ofd);
-        if (hFind)
-        {
-            do
-            {
-                if (ofd.bDirectory) continue;
-
-                strSceneCollection = GetPathWithoutExtension(ofd.fileName);
-                GlobalConfig->SetString(TEXT("General"), TEXT("SceneCollection"), strSceneCollection);
-                break;
-
-            } while (OSFindNextFile(hFind, ofd));
-            OSFindClose(hFind);
-        }
-
-        if (strSceneCollection.IsEmpty())
-        {
-            CopyFile(String() << lpAppDataPath << L"\\scenes.xconfig", String() << lpAppDataPath << L"\\sceneCollection\\scenes.xconfig", true);
-            strSceneCollection = L"scenes";
-            GlobalConfig->SetString(L"General", L"SceneCollection", strSceneCollection);
-        }
-    }
 }
 
 void SetupIni(CTSTR profile)
@@ -337,42 +264,11 @@ void SetWorkingFolder(void)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-    LoadSeDebugPrivilege();
-
-    int numArgs;
-    LPWSTR *args = CommandLineToArgvW(GetCommandLineW(), &numArgs);
     LPWSTR profile = NULL;
     LPWSTR sceneCollection = NULL;
-    LPWSTR userService = NULL;
-
-    bool bDisableMutex = false;
-
-    //------------------------------------------------------------
-    //make sure only one instance of the application can be open at a time
-
-    hOBSMutex = CreateMutex(NULL, TRUE, TEXT("OBSMutex"));
-    if(!bDisableMutex && GetLastError() == ERROR_ALREADY_EXISTS)
-    {
-        hwndMain = FindWindow(OBS_WINDOW_CLASS, NULL);
-        if(hwndMain)
-            SetForegroundWindow(hwndMain);
-
-        CloseHandle(hOBSMutex);
-        return 0;
-    }
-
     //------------------------------------------------------------
 
     hinstMain = hInstance;
-    
-    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
-    SetProcessDEPPolicy(PROCESS_DEP_ENABLE | PROCESS_DEP_DISABLE_ATL_THUNK_EMULATION);
-    InitializeExceptionHandler();
-
-    ULONG_PTR gdipToken;
-    const Gdiplus::GdiplusStartupInput gdipInput;
-    Gdiplus::GdiplusStartup(&gdipToken, &gdipInput, NULL);
-
     if(InitXT(NULL, TEXT("FastAlloc")))
     {
         InitSockets();
@@ -393,8 +289,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         TSTR lpAllocator = NULL;
 
-        {
-			
+        {			
 			SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, lpAppDataPath);
 			scat_n(lpAppDataPath, TEXT("\\OBS"), 4);            
 
@@ -439,8 +334,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 lpAllocator = (TSTR)malloc(size);
                 mcpy(lpAllocator, strAllocator.Array(), size);
             }
-
-            //RegisterServiceFileHandler();
         }
 
         if(lpAllocator)
@@ -452,20 +345,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
             LoadGlobalIni();
         }
-
-        if (!locale->LoadStringFile(TEXT("locale/en.txt")))
-            AppWarning(TEXT("Could not open locale string file '%s'"), TEXT("locale/en.txt"));
-
-        String strLanguage = GlobalConfig->GetString(TEXT("General"), TEXT("Language"), TEXT("en"));
-        if (!strLanguage.CompareI(TEXT("en")))
-        {
-            String langFile;
-            langFile << TEXT("locale/") << strLanguage << TEXT(".txt");
-
-            if (!locale->LoadStringFile(langFile))
-                AppWarning(TEXT("Could not open locale string file '%s'"), langFile.Array());
-        }
-
         //--------------------------------------------
 
         GlobalConfig->SetString(TEXT("General"), TEXT("LastAppDirectory"), lpAppPath);
@@ -474,34 +353,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         AppConfig = new ConfigFile;
         SetupIni(profile);
-        SetupSceneCollection(sceneCollection);
-
-        //--------------------------------------------
-
-        DWORD colors[16];
-        for (int i=0; i<16; i++) {
-            String strColorIdx = "Color";
-            strColorIdx << IntString(i);
-            colors[i] = GlobalConfig->GetInt(TEXT("CustomColors"), strColorIdx, 0xFFFFFF);
-        }
-
-        CCSetCustomColors(colors);
-
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-
-        String strLog;
-        strLog << lpAppDataPath << FormattedString(TEXT("\\logs\\%u-%02u-%02u-%02u%02u-%02u"), st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond) << TEXT(".log");
-
-        InitXTLog(strLog);
-
-        //--------------------------------------------
-
-        BOOL bDisableComposition = AppConfig->GetInt(TEXT("Video"), TEXT("DisableAero"), 0);
-
-        if(bDisableComposition)
-          DwmEnableComposition(DWM_EC_DISABLECOMPOSITION);
-
         //--------------------------------------------
 
         String strCaptureHookLog;
@@ -511,38 +362,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         pGCHLogMF = OSMonitorFileStart (strCaptureHookLog, true);
 
         App = new OBS;
-
-        HACCEL hAccel = LoadAccelerators(hinstMain, MAKEINTRESOURCE(IDR_ACCELERATOR1));
-
         MSG msg;
-        while(GetMessage(&msg, NULL, 0, 0))
-        {
-            if(!TranslateAccelerator(hwndMain, hAccel, &msg) && !IsDialogMessage(hwndMain, &msg))
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
+        while(GetMessage(&msg, NULL, 0, 0)){
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);           
         }
 
         delete App;
-
-        //--------------------------------------------
-
-        CCGetCustomColors(colors);
-        for (int i=0; i<16; i++) {
-            String strColorIdx = "Color";
-            strColorIdx << IntString(i);
-            GlobalConfig->SetInt(TEXT("CustomColors"), strColorIdx, colors[i]);
-        }
-
-        GlobalConfig->SetInt(TEXT("General"), TEXT("LastAppVersion"), OBS_VERSION);
-
         delete AppConfig;
         delete GlobalConfig;
-
-        if(bDisableComposition)
-            DwmEnableComposition(DWM_EC_ENABLECOMPOSITION);
-
         TerminateSockets();
 
         bool skipGCHLog = false;
@@ -571,15 +399,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         }
     }
 
-    Gdiplus::GdiplusShutdown(gdipToken);
-
     TerminateXT();
-
-    //------------------------------------------------------------
-
     CloseHandle(hOBSMutex);
-
-    LocalFree(args);
-
     return 0;
 }

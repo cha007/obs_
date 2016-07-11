@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="resource.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\RTMPPublisher.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -121,6 +118,9 @@
     <ClInclude Include="OBSApi\Utility\XFile.h">
       <Filter>OBSApi\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cursor1.cur">
@@ -144,45 +144,11 @@
     <None Include="ui\test2\test48.ico">
       <Filter>Resources</Filter>
     </None>
-    <None Include="rundir\shaders\DownscaleYUV1.5.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DrawYUVTexture.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DownscaleYUV2.25.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DownscaleYUV2.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DownscaleYUV3.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DrawSolid.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DrawSolid.vShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DrawTexture.pShader">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="rundir\shaders\DrawTexture.vShader">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="ui\test2\recording.ico">
       <Filter>Resources</Filter>
     </None>
-    <None Include="rundir\shaders\SceneTransition.pShader">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{37253580-c8f2-4488-9f8e-85782dea399d}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{c7980321-beda-4354-870e-0819ae11464d}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
@@ -190,10 +156,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{7d178c27-342a-4100-9daa-c360d22d977d}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{a2d93ce3-630d-408d-8a9e-89dc2532938e}</UniqueIdentifier>
-      <Extensions>pShader;vShader</Extensions>
     </Filter>
     <Filter Include="OBSApi">
       <UniqueIdentifier>{2c6b86a4-87f1-4b0b-bfe8-d7308a420a77}</UniqueIdentifier>

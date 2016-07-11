@@ -95,4 +95,3 @@ BASE_EXPORT void MixAudio(float *bufferDest, float *bufferSrc, UINT totalFloats,
 #include "HotkeyControlEx.h"
 #include "ColorControl.h"
 #include "VolumeControl.h"
-//#include "VolumeMeter.h"
