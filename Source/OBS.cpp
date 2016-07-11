@@ -133,10 +133,10 @@ OBS::OBS()
     //-----------------------------------------------------
     // main window class
     wc.lpszClassName = OBS_WINDOW_CLASS;
-    wc.lpfnWndProc = (WNDPROC)OBSProc;
-    wc.hIcon = LoadIcon(hinstMain, MAKEINTRESOURCE(IDI_ICON1));
+	wc.lpfnWndProc = (WNDPROC)OBSProc;
+	wc.hIcon = NULL;//LoadIcon(hinstMain, MAKEINTRESOURCE(IDI_ICON1));
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-    wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAINMENU);
+	wc.lpszMenuName = NULL;//MAKEINTRESOURCE(IDR_MAINMENU);
 
     if(!RegisterClass(&wc))
         CrashError(TEXT("Could not register main window class"));
@@ -284,10 +284,10 @@ OBS::OBS()
 
     bDragResize = false;
 
-    ReloadIniSettings();
-    ResetProfileMenu();
-    ResetSceneCollectionMenu();
-    ResetLogUploadMenu();
+     ReloadIniSettings();
+//     ResetProfileMenu();
+//     ResetSceneCollectionMenu();
+//     ResetLogUploadMenu();
 
     bAutoReconnect = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnect"), 1) != 0;
     reconnectTimeout = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnectTimeout"), 10);
@@ -740,58 +740,6 @@ void OBS::ReloadIniSettings()
         if (custom > 0 && customQSV > 0)
             AppConfig->SetString(L"Video Encoding", L"CustomQSVSettings", AppConfig->GetString(L"Video Encoding", L"CustomSettings"));
     }
-}
-
-HICON OBS::GetIcon(HINSTANCE hInst, int resource)
-{
-    for(UINT i=0; i<Icons.Num(); i++)
-    {
-        if(Icons[i].resource == resource && Icons[i].hInst == hInst)
-            return Icons[i].hIcon;
-    }
-
-    //---------------------
-
-    IconInfo ii;
-    ii.hInst = hInst;
-    ii.resource = resource;
-    ii.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(resource));
-
-    Icons << ii;
-
-    return ii.hIcon;
-}
-
-HFONT OBS::GetFont(CTSTR lpFontFace, int fontSize, int fontWeight)
-{
-    for(UINT i=0; i<Fonts.Num(); i++)
-    {
-        if(Fonts[i].strFontFace.CompareI(lpFontFace) && Fonts[i].fontSize == fontSize && Fonts[i].fontWeight == fontWeight)
-            return Fonts[i].hFont;
-    }
-
-    //---------------------
-
-    HFONT hFont = NULL;
-
-    LOGFONT lf;
-    zero(&lf, sizeof(lf));
-    scpy_n(lf.lfFaceName, lpFontFace, 31);
-    lf.lfHeight = fontSize;
-    lf.lfWeight = fontWeight;
-    lf.lfQuality = ANTIALIASED_QUALITY;
-
-    if(hFont = CreateFontIndirect(&lf))
-    {
-        FontInfo &fi = *Fonts.CreateNew();
-
-        fi.hFont = hFont;
-        fi.fontSize = fontSize;
-        fi.fontWeight = fontWeight;
-        fi.strFontFace = lpFontFace;
-    }
-
-    return hFont;
 }
 
 void OBS::SelectSources()

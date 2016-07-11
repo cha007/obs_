@@ -120,10 +120,10 @@ public:
 
     void Update();
 
-    void MoveUp();
-    void MoveDown();
-    void MoveToTop();
-    void MoveToBottom();
+//     void MoveUp();
+//     void MoveDown();
+//     void MoveToTop();
+//     void MoveToBottom();
 };
 
 //====================================================================================
@@ -158,12 +158,10 @@ public:
 
     virtual void Tick(float fSeconds);
     virtual void Preprocess();
-    virtual void Render();
+//  virtual void Render();
+// 	virtual void RenderSelections(Shader *solidPixelShader);
 
     virtual void UpdateSettings() {}
-
-    virtual void RenderSelections(Shader *solidPixelShader);
-
     virtual void BeginScene();
     virtual void EndScene();
 

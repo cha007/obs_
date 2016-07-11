@@ -43,9 +43,6 @@
     <ClInclude Include="OBSApi\AudioSource.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
-    <ClInclude Include="OBSApi\GraphicsSystem.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
     <ClInclude Include="OBSApi\resource.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
@@ -237,9 +234,6 @@
       <Filter>OBSApi</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\AudioSource.cpp">
-      <Filter>OBSApi</Filter>
-    </ClCompile>
-    <ClCompile Include="OBSApi\GraphicsSystem.cpp">
       <Filter>OBSApi</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\OBSApi.cpp">

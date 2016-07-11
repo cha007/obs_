@@ -1,24 +1,4 @@
-/********************************************************************************
- Copyright (C) 2012 Hugh Bailey <obs.jim@gmail.com>
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-********************************************************************************/
-
-
 #include "OBSApi.h"
-
 
 SceneItem::~SceneItem()
 {
@@ -116,79 +96,79 @@ void SceneItem::Update()
     element->SetInt(TEXT("cy"), int(size.y));*/
 }
 
-void SceneItem::MoveUp()
-{
-    SceneItem *thisItem = this;
-    UINT id = parent->sceneItems.FindValueIndex(thisItem);
-    assert(id != INVALID);
-
-    if(id > 0)
-    {
-        API->EnterSceneMutex();
-
-        parent->sceneItems.SwapValues(id, id-1);
-        GetElement()->MoveUp();
-
-        API->LeaveSceneMutex();
-    }
-}
-
-void SceneItem::MoveDown()
-{
-    SceneItem *thisItem = this;
-    UINT id = parent->sceneItems.FindValueIndex(thisItem);
-    assert(id != INVALID);
-
-    if(id < (parent->sceneItems.Num()-1))
-    {
-        API->EnterSceneMutex();
-
-        parent->sceneItems.SwapValues(id, id+1);
-        GetElement()->MoveDown();
-
-        API->LeaveSceneMutex();
-    }
-}
-
-void SceneItem::MoveToTop()
-{
-    SceneItem *thisItem = this;
-    UINT id = parent->sceneItems.FindValueIndex(thisItem);
-    assert(id != INVALID);
-
-    if(id > 0)
-    {
-        API->EnterSceneMutex();
-
-        parent->sceneItems.Remove(id);
-        parent->sceneItems.Insert(0, this);
-
-        GetElement()->MoveToTop();
-
-        API->LeaveSceneMutex();
-    }
-}
-
-void SceneItem::MoveToBottom()
-{
-    SceneItem *thisItem = this;
-    UINT id = parent->sceneItems.FindValueIndex(thisItem);
-    assert(id != INVALID);
-
-    if(id < (parent->sceneItems.Num()-1))
-    {
-        API->EnterSceneMutex();
-
-        parent->sceneItems.Remove(id);
-        parent->sceneItems << this;
-
-        GetElement()->MoveToBottom();
-
-        API->LeaveSceneMutex();
-    }
-}
-
-//====================================================================================
+// void SceneItem::MoveUp()
+// {
+//     SceneItem *thisItem = this;
+//     UINT id = parent->sceneItems.FindValueIndex(thisItem);
+//     assert(id != INVALID);
+// 
+//     if(id > 0)
+//     {
+//         API->EnterSceneMutex();
+// 
+//         parent->sceneItems.SwapValues(id, id-1);
+//         GetElement()->MoveUp();
+// 
+//         API->LeaveSceneMutex();
+//     }
+// }
+// 
+// void SceneItem::MoveDown()
+// {
+//     SceneItem *thisItem = this;
+//     UINT id = parent->sceneItems.FindValueIndex(thisItem);
+//     assert(id != INVALID);
+// 
+//     if(id < (parent->sceneItems.Num()-1))
+//     {
+//         API->EnterSceneMutex();
+// 
+//         parent->sceneItems.SwapValues(id, id+1);
+//         GetElement()->MoveDown();
+// 
+//         API->LeaveSceneMutex();
+//     }
+// }
+// 
+// void SceneItem::MoveToTop()
+// {
+//     SceneItem *thisItem = this;
+//     UINT id = parent->sceneItems.FindValueIndex(thisItem);
+//     assert(id != INVALID);
+// 
+//     if(id > 0)
+//     {
+//         API->EnterSceneMutex();
+// 
+//         parent->sceneItems.Remove(id);
+//         parent->sceneItems.Insert(0, this);
+// 
+//         GetElement()->MoveToTop();
+// 
+//         API->LeaveSceneMutex();
+//     }
+// }
+// 
+// void SceneItem::MoveToBottom()
+// {
+//     SceneItem *thisItem = this;
+//     UINT id = parent->sceneItems.FindValueIndex(thisItem);
+//     assert(id != INVALID);
+// 
+//     if(id < (parent->sceneItems.Num()-1))
+//     {
+//         API->EnterSceneMutex();
+// 
+//         parent->sceneItems.Remove(id);
+//         parent->sceneItems << this;
+// 
+//         GetElement()->MoveToBottom();
+// 
+//         API->LeaveSceneMutex();
+//     }
+// }
+// 
+// //====================================================================================
 
 Scene::~Scene()
 {
@@ -281,72 +261,6 @@ void Scene::Tick(float fSeconds)
         if(item->source)
             item->source->Tick(fSeconds);
     }
-}
-
-void Scene::Render()
-{
-    GS->ClearColorBuffer();
-
-    for(int i=sceneItems.Num()-1; i>=0; i--)
-    {
-        SceneItem *item = sceneItems[i];
-        if(item->source && item->bRender)
-        {
-            GS->SetCropping (item->GetCrop().x, item->GetCrop().y, item->GetCrop().w, item->GetCrop().z);
-            item->source->Render(item->pos, item->size);
-            GS->SetCropping (0.0f, 0.0f, 0.0f, 0.0f);
-        }
-    }
-}
-
-void Scene::RenderSelections(Shader *solidPixelShader)
-{
-//     for(UINT i=0; i<sceneItems.Num(); i++)
-//     {
-//         SceneItem *item = sceneItems[i];
-// 
-//         if(item->bSelected)
-//         {
-//             Vect2 baseScale = item->GetSource() ? item->GetSource()->GetSize() : item->GetSize();
-//             Vect2 cropFactor = baseScale / item->GetSize();
-//             Vect4 crop = item->GetCrop();
-//             Vect2 pos  = API->MapFrameToWindowPos(item->GetPos());
-//             Vect2 scale = API->GetFrameToWindowScale();
-//             crop.x *= scale.x; crop.y *= scale.y;
-//             crop.z *= scale.y; crop.w *= scale.x;
-//             pos.x += crop.x;
-//             pos.y += crop.y;
-//             Vect2 size = API->MapFrameToWindowSize(item->GetSize());
-//             size.x -= (crop.x + crop.w);
-//             size.y -= (crop.y + crop.z);
-//             Vect2 selectBoxSize = Vect2(10.0f, 10.0f);
-//             
-//             DrawBox(pos, selectBoxSize);
-//             DrawBox((pos+size)-selectBoxSize, selectBoxSize);
-//             DrawBox(pos+Vect2(size.x-selectBoxSize.x, 0.0f), selectBoxSize);
-//             DrawBox(pos+Vect2(0.0f, size.y-selectBoxSize.y), selectBoxSize);
-// 
-//             // Top
-//             if (CloseFloat(crop.y, 0.0f)) solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0xFF0000);
-//             else solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0x00FF00);
-//             DrawBox(pos, Vect2(size.x, 0.0f));
-// 
-//             // Left
-//             if (CloseFloat(crop.x, 0.0f)) solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0xFF0000);
-//             else solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0x00FF00);
-//             DrawBox(pos, Vect2(0.0f, size.y));
-// 
-//             // Right
-//             if (CloseFloat(crop.w, 0.0f)) solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0xFF0000);
-//             else solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0x00FF00);
-//             DrawBox(pos+Vect2(size.x, 0.0f), Vect2(0.0f, size.y));
-// 
-//             // Bottom
-//             if (CloseFloat(crop.z, 0.0f)) solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0xFF0000);
-//             else solidPixelShader->SetColor(solidPixelShader->GetParameter(0), 0x00FF00);
-//             DrawBox(pos+Vect2(0.0f, size.y), Vect2(size.x, 0.0f));
-//         }
-//     }
 }
 
 void Scene::BeginScene()

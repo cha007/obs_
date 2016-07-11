@@ -399,12 +399,6 @@ retryHookTest:
     Log(TEXT("  Base resolution: %ux%u"), baseCX, baseCY);
     Log(TEXT("  Output resolution: %ux%u"), outputCX, outputCY);
     Log(TEXT("------------------------------------------"));
-
-    //------------------------------------------------------------------
-
-//     GS = new D3D10System;
-//     GS->Init();
-
     //Thanks to ASUS OSD hooking the goddamn user mode driver framework (!!!!), we have to re-check for dangerous
     //hooks after initializing D3D.
 retryHookTestV2:

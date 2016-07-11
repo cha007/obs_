@@ -1,7 +1,3 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by OBS.rc
-//
 #define IDC_DEFAULTS                    3
 #define IDOK2                           3
 #define IDC_APPLY                       4
@@ -444,8 +440,6 @@
 #define ID_PROFILE_IMPORT               40086
 #define ID_PROFILE_EXPORT               40087
 
-// Next default values for new objects
-// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        152

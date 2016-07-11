@@ -529,26 +529,13 @@ class OBS
     friend class SceneItem;
     friend class RTMPPublisher;
     friend class RTMPServer;
-    friend class D3D10System;
     friend class OBSAPIInterface;
     friend class GlobalSource;
     friend class MMDeviceAudioSource;
     //---------------------------------------------------
     // graphics stuff
 public:
-    IDXGISwapChain  *projectorSwap;
-    ID3D10Texture2D *copyTextures[NUM_RENDER_BUFFERS];
-    Texture         *mainRenderTextures[NUM_RENDER_BUFFERS];
-    Texture         *yuvRenderTextures[NUM_RENDER_BUFFERS];
-
-    Texture *lastRenderTexture;
-    Texture *transitionTexture;
-
-    Shader  *mainVertexShader, *mainPixelShader, *yuvScalePixelShader, *transitionPixelShader;
-    Shader  *solidVertexShader, *solidPixelShader;
-
     //---------------------------------------------------
-
     struct StopInfo
     {
         DWORD time = (DWORD)-1;
@@ -572,19 +559,13 @@ public:
     UINT sampleRateHz;
     UINT audioChannels;
     BOOL isStereo;
-
     AudioEncoder *audioEncoder;
 
     //---------------------------------------------------
     // scene/encoder
-
     Scene                   *scene;
     VideoEncoder            *videoEncoder;
-	HDC                     hCaptureDC;
-	//List<MonitorInfo>       monitors;
-
     UINT                    encoderSkipThreshold;
-
     XConfig                 scenesConfig;
     XConfig                 globalSourcesImportConfig;
     XConfig                 scenesCopyToConfig;
@@ -672,7 +653,7 @@ private:
     UINT    projectorWidth, projectorHeight;
     UINT    projectorMonitorID;
     HWND    hwndProjector;
-    Texture *projectorTexture;
+
     bool    bEditMode;
     bool    bRenderViewEnabled;
     bool    bForceRenderViewErase;
@@ -955,10 +936,6 @@ private:
     static String GetApplicationName();
     static void ResetApplicationName();
 
-//     void SetStatusBarData(); 
-//     static void ClearStatusBar();
-//     static void DrawStatusBar(DRAWITEMSTRUCT &dis);
-
     void ReloadIniSettings();
     void RestartNetwork();
 
@@ -1027,9 +1004,6 @@ public:
     inline UINT GetFrameTime() const {return frameTime;}
 
     inline XElement* GetSceneElement() const {return sceneElement;}
-
-    virtual HICON GetIcon(HINSTANCE hInst, int resource);
-    virtual HFONT GetFont(CTSTR lpFontFace, int fontSize, int fontWeight);
 
     inline void GetVideoHeaders(DataPacket &packet) {videoEncoder->GetHeaders(packet);}
     inline void GetAudioHeaders(DataPacket &packet) {audioEncoder->GetHeaders(packet);}

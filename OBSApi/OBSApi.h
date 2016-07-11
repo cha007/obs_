@@ -86,12 +86,15 @@ BASE_EXPORT void MixAudio(float *bufferDest, float *bufferSrc, UINT totalFloats,
 
 //-------------------------------------------
 
-#include "GraphicsSystem.h"
+#pragma warning(disable: 4530)
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "Scene.h"
 #include "SettingsPane.h"
 #include "APIInterface.h"
 #include "AudioFilter.h"
 #include "AudioSource.h"
-//#include "HotkeyControlEx.h"
-//#include "ColorControl.h"
 #include "VolumeControl.h"
