@@ -112,8 +112,7 @@ VOID CheckPermissionsAndDiskSpace()
     }
 }
 
-OBS::OBS()
-{
+OBS::OBS(){
 	App = this;
     hSceneMutex = OSCreateMutex();
     hAuxAudioMutex = OSCreateMutex();
@@ -122,88 +121,6 @@ OBS::OBS()
     //-----------------------------------------------------
     // load classes
     RegisterSceneClass(TEXT("Scene"), Str("Scene"), (OBSCREATEPROC)CreateNormalScene, NULL, false);
-  
-    //-----------------------------------------------------
-    // render frame class
-    WNDCLASS wc;
-    zero(&wc, sizeof(wc));
-    wc.hInstance = hinstMain;
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-
-    //-----------------------------------------------------
-    // main window class
-    wc.lpszClassName = OBS_WINDOW_CLASS;
-	wc.lpfnWndProc = (WNDPROC)OBSProc;
-	wc.hIcon = NULL;//LoadIcon(hinstMain, MAKEINTRESOURCE(IDI_ICON1));
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	wc.lpszMenuName = NULL;//MAKEINTRESOURCE(IDR_MAINMENU);
-
-    if(!RegisterClass(&wc))
-        CrashError(TEXT("Could not register main window class"));
-
-    //-----------------------------------------------------
-    // create main window
-
-    int fullscreenX = GetSystemMetrics(SM_CXFULLSCREEN);
-    int fullscreenY = GetSystemMetrics(SM_CYFULLSCREEN);
-
-    borderXSize = borderYSize = 0;
-
-    borderXSize += GetSystemMetrics(SM_CXSIZEFRAME)*2;
-    borderYSize += GetSystemMetrics(SM_CYSIZEFRAME)*2;
-    borderYSize += GetSystemMetrics(SM_CYMENU);
-    borderYSize += GetSystemMetrics(SM_CYCAPTION);
-
-    clientWidth  = GlobalConfig->GetInt(TEXT("General"), TEXT("Width"),  defaultClientWidth);
-    clientHeight = GlobalConfig->GetInt(TEXT("General"), TEXT("Height"), defaultClientHeight);
-
-    if(clientWidth < minClientWidth)
-        clientWidth = minClientWidth;
-    if(clientHeight < minClientHeight)
-        clientHeight = minClientHeight;
-
-    int maxCX = fullscreenX-borderXSize;
-    int maxCY = fullscreenY-borderYSize;
-
-    if(clientWidth > maxCX)
-        clientWidth = maxCX;
-    if(clientHeight > maxCY)
-        clientHeight = maxCY;
-
-    int cx = clientWidth  + borderXSize;
-    int cy = clientHeight + borderYSize;
-
-    int x = (fullscreenX/2)-(cx/2);
-    int y = (fullscreenY/2)-(cy/2);
-
-    int posX = GlobalConfig->GetInt(TEXT("General"), TEXT("PosX"), -9999);
-    int posY = GlobalConfig->GetInt(TEXT("General"), TEXT("PosY"), -9999);
-
-    hwndMain = CreateWindowEx(WS_EX_CONTROLPARENT|WS_EX_WINDOWEDGE|(LocaleIsRTL() ? WS_EX_LAYOUTRTL : 0), OBS_WINDOW_CLASS, GetApplicationName(),
-        WS_OVERLAPPED | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU | WS_CLIPCHILDREN,
-        x, y, cx, cy, NULL, NULL, hinstMain, NULL);
-    if(!hwndMain)
-        CrashError(TEXT("Could not create main window"));
-
-    hmenuMain = GetMenu(hwndMain);
-    LocalizeMenu(hmenuMain);
-
-    //-----------------------------------------------------
-    // scenes listbox
-
-    HWND hwndTemp;
-    hwndTemp = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("LISTBOX"), NULL,
-        WS_CHILDWINDOW|WS_VISIBLE|WS_TABSTOP|LBS_HASSTRINGS|WS_VSCROLL|LBS_NOTIFY|LBS_NOINTEGRALHEIGHT|WS_CLIPSIBLINGS,
-        0, 0, 0, 0, hwndMain, (HMENU)ID_SCENES, 0, 0);
-    SendMessage(hwndTemp, WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT), TRUE);
-
-    listboxProc = (WNDPROC)GetWindowLongPtr(hwndTemp, GWLP_WNDPROC);
-    SetWindowLongPtr(hwndTemp, GWLP_WNDPROC, (LONG_PTR)OBS::ListboxHook);
-   
-
-    //-----------------------------------------------------
-    // populate scenes
-    hwndTemp = GetDlgItem(hwndMain, ID_SCENES);
     String collection = GetCurrentSceneCollection();
 
     if (!OSFileExists(String() << lpAppDataPath << L"\\sceneCollection\\" << collection << L".xconfig"))
@@ -239,40 +156,6 @@ OBS::OBS()
 
     if(!scenesConfig.Open(strScenesConfig))
         CrashError(TEXT("Could not open '%s'"), strScenesConfig.Array());
-
-    XElement *scenes = scenesConfig.GetElement(TEXT("scenes"));
-    if(!scenes)
-        scenes = scenesConfig.CreateElement(TEXT("scenes"));
-
-    UINT numScenes = scenes->NumElements();
-    if(!numScenes)
-    {
-        XElement *scene = scenes->CreateElement(Str("Scene"));
-        scene->SetString(TEXT("class"), TEXT("Scene"));
-        numScenes++;
-    }
-
-    for(UINT i=0; i<numScenes; i++)
-    {
-        XElement *scene = scenes->GetElementByID(i);
-        //scene->SetString(TEXT("class"), TEXT("Scene"));
-        SendMessage(hwndTemp, LB_ADDSTRING, 0, (LPARAM)scene->GetName());
-    }
-
-    //-----------------------------------------------------
-    // populate sources
-
-    if(numScenes)
-    {
-        String strScene = AppConfig->GetString(TEXT("General"), TEXT("CurrentScene"));
-        int id = (int)SendMessage(hwndTemp, LB_FINDSTRINGEXACT, -1, (LPARAM)strScene.Array());
-        if(id == LB_ERR)
-            id = 0;
-
-        SendMessage(hwndTemp, LB_SETCURSEL, (WPARAM)id, 0);
-        SendMessage(hwndMain, WM_COMMAND, MAKEWPARAM(ID_SCENES, LBN_SELCHANGE), (LPARAM)GetDlgItem(hwndMain, ID_SCENES));
-    }
-
     //-----------------------------------------------------
 
     hHotkeyMutex = OSCreateMutex();
@@ -284,7 +167,7 @@ OBS::OBS()
 
     bDragResize = false;
 
-     ReloadIniSettings();
+    ReloadIniSettings();
 
     bAutoReconnect = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnect"), 1) != 0;
     reconnectTimeout = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnectTimeout"), 10);
@@ -298,7 +181,6 @@ OBS::OBS()
         OBSMessageBox(hwndMain, TEXT("Webroot Secureanywhere appears to be active.  This product will cause problems with OBS as the security features block OBS from accessing Windows GDI functions.  It is highly recommended that you disable Secureanywhere and restart OBS.\r\n\r\nOf course you can always just ignore this message if you want, but it may prevent you from being able to stream certain things. Please do not report any bugs you may encounter if you leave Secureanywhere enabled."), TEXT("Just a slight issue you might want to be aware of"), MB_OK);
 
     CheckPermissionsAndDiskSpace();
-    ShowWindow(hwndMain, SW_SHOW);
 
     renderFrameIn1To1Mode = !!GlobalConfig->GetInt(L"General", L"1to1Preview", false);
 

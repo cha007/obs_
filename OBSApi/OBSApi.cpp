@@ -84,55 +84,6 @@ void LocalizeWindow(HWND hwnd, LocaleStringLookup *lookup)
     }
 };
 
-void LocalizeMenu(HMENU hMenu, LocaleStringLookup *lookup)
-{
-    if(!lookup) lookup = locale;
-
-    int itemCount = GetMenuItemCount(hMenu);
-    if(itemCount == -1)
-        return;
-
-    bool bRTL = LocaleIsRTL(lookup);
-
-    for(int i=0; i<itemCount; i++)
-    {
-        MENUITEMINFO mii;
-        zero(&mii, sizeof(mii));
-        mii.cbSize = sizeof(mii);
-        mii.fMask = MIIM_SUBMENU|MIIM_STRING|MIIM_FTYPE;
-        GetMenuItemInfo(hMenu, i, TRUE, &mii);
-
-        if(mii.fType & MFT_SEPARATOR || mii.cch < 2)
-            continue;
-
-        HMENU hSubMenu = mii.hSubMenu;
-
-        String strLookup;
-        strLookup.SetLength(mii.cch);
-
-        mii.fMask = MIIM_STRING;
-        mii.dwTypeData = strLookup.Array();
-        mii.cch = strLookup.Length()+1;
-        GetMenuItemInfo(hMenu, i, TRUE, &mii);
-
-        String strName;
-        if(strLookup[0] == '.')
-            strName = strLookup.Array()+1;
-        else if(!lookup->HasLookup(strLookup))
-            strName = strLookup;
-        else
-            strName = lookup->LookupString(strLookup);
-
-        mii.fMask = MIIM_STRING|MIIM_FTYPE;
-        mii.dwTypeData = strName.Array();
-
-        SetMenuItemInfo(hMenu, i, TRUE, &mii);
-
-        if(hSubMenu)
-            LocalizeMenu(hSubMenu);
-    }
-}
-
 int OBSMessageBox(HWND hwnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT flags)
 {
     if (LocaleIsRTL())
