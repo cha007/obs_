@@ -43,13 +43,7 @@
     <ClInclude Include="OBSApi\AudioSource.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
-    <ClInclude Include="OBSApi\resource.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
     <ClInclude Include="OBSApi\Scene.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
-    <ClInclude Include="OBSApi\SettingsPane.h">
       <Filter>OBSApi</Filter>
     </ClInclude>
     <ClInclude Include="OBSApi\Utility\XMath.h">
@@ -109,41 +103,11 @@
     <ClInclude Include="OBSApi\Utility\XFile.h">
       <Filter>OBSApi\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Source</Filter>
+    <ClInclude Include="OBSApi\SettingsPane.h">
+      <Filter>OBSApi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cursor1.cur">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\mic2-muted.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\mic2.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\speaker-muted.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\speaker.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\test2\test.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\test2\test48.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="ui\test2\recording.ico">
-      <Filter>Resources</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{c7980321-beda-4354-870e-0819ae11464d}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{7d178c27-342a-4100-9daa-c360d22d977d}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -154,11 +118,6 @@
     <Filter Include="OBSApi\Utility">
       <UniqueIdentifier>{254aa542-cb33-4012-b546-e00a24278466}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="OBS.rc">
-      <Filter>Resources</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\RTMPStuff.cpp">
@@ -239,9 +198,6 @@
     <ClCompile Include="OBSApi\OBSApi.cpp">
       <Filter>OBSApi</Filter>
     </ClCompile>
-    <ClCompile Include="OBSApi\SettingsPane.cpp">
-      <Filter>OBSApi</Filter>
-    </ClCompile>
     <ClCompile Include="OBSApi\Utility\XMath.cpp">
       <Filter>OBSApi\Utility</Filter>
     </ClCompile>
@@ -277,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="OBSApi\Utility\XFile_Windows.cpp">
       <Filter>OBSApi\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="OBSApi\SettingsPane.cpp">
+      <Filter>OBSApi</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

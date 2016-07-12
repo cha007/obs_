@@ -346,10 +346,10 @@ retryHookTest:
         DisableMenusWhileStreaming(false);
         OSLeaveMutex (hStartupShutdownMutex);
 
-        if(!bReconnecting)
-            OBSMessageBox(hwndMain, strError, NULL, MB_ICONERROR);
-        else
-            OBSDialogBox(hinstMain, MAKEINTRESOURCE(IDD_RECONNECTING), hwndMain, OBS::ReconnectDialogProc);
+//         if(!bReconnecting)
+//             OBSMessageBox(hwndMain, strError, NULL, MB_ICONERROR);
+//         else
+//             OBSDialogBox(hinstMain, MAKEINTRESOURCE(IDD_RECONNECTING), hwndMain, OBS::ReconnectDialogProc);
         bStartingUp = false;
         return;
     }

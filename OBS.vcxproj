@@ -274,7 +274,6 @@
     <ClInclude Include="OBSApi\AudioFilter.h" />
     <ClInclude Include="OBSApi\AudioSource.h" />
     <ClInclude Include="OBSApi\OBSApi.h" />
-    <ClInclude Include="OBSApi\resource.h" />
     <ClInclude Include="OBSApi\Scene.h" />
     <ClInclude Include="OBSApi\SettingsPane.h" />
     <ClInclude Include="OBSApi\Utility\Alloc.h" />
@@ -297,7 +296,6 @@
     <ClInclude Include="OBSApi\Utility\XTLocalization.h" />
     <ClInclude Include="OBSApi\Utility\XT_Windows.h" />
     <ClInclude Include="OBSApi\VolumeControl.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\cudaDynload.h" />
     <ClInclude Include="Source\DataPacketHelpers.h" />
     <ClInclude Include="Source\Main.h" />
@@ -307,19 +305,6 @@
     <ClInclude Include="Source\OBS.h" />
     <ClInclude Include="Source\RTMPPublisher.h" />
     <ClInclude Include="Source\RTMPStuff.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cursor1.cur" />
-    <None Include="ui\mic2-muted.ico" />
-    <None Include="ui\mic2.ico" />
-    <None Include="ui\speaker-muted.ico" />
-    <None Include="ui\speaker.ico" />
-    <None Include="ui\test2\recording.ico" />
-    <None Include="ui\test2\test.ico" />
-    <None Include="ui\test2\test48.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="OBS.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OBSApi\APIDefs.cpp" />

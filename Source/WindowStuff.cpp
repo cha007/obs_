@@ -1,23 +1,4 @@
-﻿/********************************************************************************
- Copyright (C) 2012 Hugh Bailey <obs.jim@gmail.com>
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-********************************************************************************/
-
-
-#include "Main.h"
+﻿#include "Main.h"
 #include <shellapi.h>
 #include <ShlObj.h>
 #include <uxtheme.h>
@@ -26,9 +7,6 @@
 
 #include <memory>
 #include <vector>
-
-
-//hello, you've come into the file I hate the most.
 
 #define FREEZE_WND(hwnd)   SendMessage(hwnd, WM_SETREDRAW, (WPARAM)FALSE, (LPARAM) 0);
 #define THAW_WND(hwnd)     {SendMessage(hwnd, WM_SETREDRAW, (WPARAM)TRUE, (LPARAM) 0); RedrawWindow(hwnd, NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);}
@@ -248,7 +226,6 @@ INT_PTR CALLBACK OBS::ReconnectDialogProc(HWND hwnd, UINT message, WPARAM wParam
             }
     }
 */
-
     return FALSE;
 }
 
@@ -290,596 +267,53 @@ void OBS::AddSceneCollectionToMenu(HMENU menu)
 
 //----------------------------
 
-void OBS::AddSceneCollection(SceneCollectionAction action)
-{
-    if (App->bRunning)
-        return;
-
-    String strCurSceneCollection = GlobalConfig->GetString(TEXT("General"), TEXT("SceneCollection"));
-
-    String strSceneCollection;
-    if (action == SceneCollectionAction::Rename)
-        strSceneCollection = strCurSceneCollection;
-
-    if (OBSDialogBox(hinstMain, MAKEINTRESOURCE(IDD_ENTERNAME), hwndMain, OBS::EnterSceneCollectionDialogProc, (LPARAM)&strSceneCollection) != IDOK)
-        return;
-
-    App->scenesConfig.SaveTo(String() << lpAppDataPath << "\\scenes.xconfig");
-    App->scenesConfig.Save();
-
-    String strCurSceneCollectionPath;
-    strCurSceneCollectionPath = FormattedString(L"%s\\sceneCollection\\%s.xconfig", lpAppDataPath, strCurSceneCollection.Array());
-
-    String strSceneCollectionPath;
-    strSceneCollectionPath << lpAppDataPath << TEXT("\\sceneCollection\\") << strSceneCollection << TEXT(".xconfig");
-
-    if ((action != SceneCollectionAction::Rename || !strSceneCollectionPath.CompareI(strCurSceneCollectionPath)) && OSFileExists(strSceneCollectionPath))
-        OBSMessageBox(hwndMain, Str("Settings.General.ScenesExists"), NULL, 0);
-    else
-    {
-        bool success = true;
-        App->scenesConfig.Close(true);
-
-        if (action == SceneCollectionAction::Rename)
-        {
-            if (!MoveFile(strCurSceneCollectionPath, strSceneCollectionPath))
-                success = false;
-        }
-        else if (action == SceneCollectionAction::Clone)
-        {
-            if (!CopyFileW(strCurSceneCollectionPath, strSceneCollectionPath, TRUE))
-                success = false;
-        }
-        else
-        {
-            if (!App->scenesConfig.Open(strSceneCollectionPath))
-            {
-                OBSMessageBox(hwndMain, TEXT("Error - unable to create new Scene Collection, could not create file"), NULL, 0);
-                success = false;
-            }
-        }
-
-        if (!success)
-        {
-            App->scenesConfig.Open(strCurSceneCollectionPath);
-            return;
-        }
-
-        GlobalConfig->SetString(TEXT("General"), TEXT("SceneCollection"), strSceneCollection);
-
-        App->ReloadSceneCollection();
-        App->ResetSceneCollectionMenu();
-        App->ResetApplicationName();
-    }
+void OBS::AddSceneCollection(SceneCollectionAction action){
 }
 
-void OBS::RemoveSceneCollection()
-{
-    if (App->bRunning)
-        return;
-
-    String strCurSceneCollection = GlobalConfig->GetString(TEXT("General"), TEXT("SceneCollection"));
-    String strCurSceneCollectionFile = strCurSceneCollection + L".xconfig";
-    String strCurSceneCollectionDir;
-    strCurSceneCollectionDir << lpAppDataPath << TEXT("\\sceneCollection\\");
-
-    OSFindData ofd;
-    HANDLE hFind = OSFindFirstFile(strCurSceneCollectionDir + L"*.xconfig", ofd);
-
-    if (!hFind)
-    {
-        Log(L"Find failed for scene collections");
-        return;
-    }
-
-    String nextFile;
-
-    do
-    {
-        if (scmpi(ofd.fileName, strCurSceneCollectionFile) != 0)
-        {
-            nextFile = ofd.fileName;
-            break;
-        }
-    } while (OSFindNextFile(hFind, ofd));
-    OSFindClose(hFind);
-
-    if (nextFile.IsEmpty())
-        return;
-
-    String strConfirm = Str("Settings.General.ConfirmDelete");
-    strConfirm.FindReplace(TEXT("$1"), strCurSceneCollection);
-    if (OBSMessageBox(hwndMain, strConfirm, Str("DeleteConfirm.Title"), MB_YESNO) == IDYES)
-    {
-        String strCurSceneCollectionPath;
-        strCurSceneCollectionPath << strCurSceneCollectionDir << strCurSceneCollection << TEXT(".xconfig");
-        OSDeleteFile(strCurSceneCollectionPath);
-        App->scenesConfig.Close();
-
-        GlobalConfig->SetString(L"General", L"SceneCollection", GetPathWithoutExtension(nextFile));
-
-        App->ReloadSceneCollection();
-        App->ResetSceneCollectionMenu();
-    }
+void OBS::RemoveSceneCollection(){
 }
 
-void OBS::ImportSceneCollection()
-{
-    if (OBSMessageBox(hwndMain, Str("ImportCollectionReplaceWarning.Text"), Str("ImportCollectionReplaceWarning.Title"), MB_YESNO) == IDNO)
-        return;
-
-    TCHAR lpFile[MAX_PATH+1];
-    zero(lpFile, sizeof(lpFile));
-
-    OPENFILENAME ofn;
-    zero(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = lpFile;
-    ofn.hwndOwner = hwndMain;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFilter = TEXT("Scene Files (*.xconfig)\0*.xconfig\0");
-    ofn.nFilterIndex = 1;
-    ofn.lpstrInitialDir = GlobalConfig->GetString(L"General", L"LastImportExportPath");
-
-    TCHAR curDirectory[MAX_PATH+1];
-    GetCurrentDirectory(MAX_PATH, curDirectory);
-
-    BOOL bOpenFile = GetOpenFileName(&ofn);
-    SetCurrentDirectory(curDirectory);
-
-    if (!bOpenFile)
-        return;
-
-    if (GetPathExtension(lpFile).IsEmpty())
-        scat(lpFile, L".xconfig");
-
-    GlobalConfig->SetString(L"General", L"LastImportExportPath", GetPathDirectory(lpFile));
-
-    String strCurSceneCollection = GlobalConfig->GetString(TEXT("General"), TEXT("SceneCollection"));
-    String strCurSceneCollectionFile;
-    strCurSceneCollectionFile << lpAppDataPath << TEXT("\\sceneCollection\\") << strCurSceneCollection << L".xconfig";
-
-    scenesConfig.Close();
-    CopyFile(lpFile, strCurSceneCollectionFile, false);
-    App->ReloadSceneCollection();
+void OBS::ImportSceneCollection(){
 }
 
-void OBS::ExportSceneCollection()
-{
-    TCHAR lpFile[MAX_PATH+1];
-    zero(lpFile, sizeof(lpFile));
-
-    OPENFILENAME ofn;
-    zero(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = lpFile;
-    ofn.hwndOwner = hwndMain;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFilter = TEXT("Scene Files (*.xconfig)\0*.xconfig\0");
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-    ofn.lpstrInitialDir = GlobalConfig->GetString(L"General", L"LastImportExportPath");
-
-    TCHAR curDirectory[MAX_PATH+1];
-    GetCurrentDirectory(MAX_PATH, curDirectory);
-
-    BOOL bSaveFile = GetSaveFileName(&ofn);
-    SetCurrentDirectory(curDirectory);
-
-    if (!bSaveFile)
-        return;
-
-    if (GetPathExtension(lpFile).IsEmpty())
-        scat(lpFile, L".xconfig");
-
-    GlobalConfig->SetString(L"General", L"LastImportExportPath", GetPathDirectory(lpFile));
-
-    scenesConfig.SaveTo(lpFile);
+void OBS::ExportSceneCollection(){
 }
 
-//----------------------------
-
-void OBS::AddProfile(ProfileAction action)
-{
-    if (App->bRunning)
-        return;
-
-    String strCurProfile = GlobalConfig->GetString(TEXT("General"), TEXT("Profile"));
-
-    String strProfile;
-    if (action == ProfileAction::Rename)
-        strProfile = strCurProfile;
-
-    if (OBSDialogBox(hinstMain, MAKEINTRESOURCE(IDD_ENTERNAME), hwndMain, OBS::EnterProfileDialogProc, (LPARAM)&strProfile) != IDOK)
-        return;
-
-    String strCurProfilePath;
-    strCurProfilePath = FormattedString(L"%s\\profiles\\%s.ini", lpAppDataPath, strCurProfile.Array());
-
-    String strProfilePath;
-    strProfilePath << lpAppDataPath << TEXT("\\profiles\\") << strProfile << TEXT(".ini");
-
-    if ((action != ProfileAction::Rename || !strProfilePath.CompareI(strCurProfilePath)) && OSFileExists(strProfilePath))
-        OBSMessageBox(hwndMain, Str("MainMenu.Profiles.ProfileExists"), NULL, 0);
-    else
-    {
-        bool success = true;
-
-        if (action == ProfileAction::Rename)
-        {
-            if (!MoveFile(strCurProfilePath, strProfilePath))
-                success = false;
-            AppConfig->SetFilePath(strProfilePath);
-        }
-        else if (action == ProfileAction::Clone)
-        {
-            if (!CopyFileW(strCurProfilePath, strProfilePath, TRUE))
-                success = false;
-        }
-        else
-        {
-            if(!AppConfig->Create(strProfilePath))
-            {
-                OBSMessageBox(hwndMain, TEXT("Error - unable to create new profile, could not create file"), NULL, 0);
-                return;
-            }
-        }
-
-        if (!success)
-        {
-            AppConfig->Open(strCurProfilePath);
-            return;
-        }
-
-        GlobalConfig->SetString(TEXT("General"), TEXT("Profile"), strProfile);
-
-        App->ReloadIniSettings();
-        App->ResetProfileMenu();
-        App->ResetApplicationName();
-    }
+void OBS::AddProfile(ProfileAction action){
 }
 
-void OBS::RemoveProfile()
-{
-    if (App->bRunning)
-        return;
-
-    String strCurProfile = GlobalConfig->GetString(TEXT("General"), TEXT("Profile"));
-
-    String strCurProfileFile = strCurProfile + L".ini";
-    String strCurProfileDir;
-    strCurProfileDir << lpAppDataPath << TEXT("\\profiles\\");
-
-    OSFindData ofd;
-    HANDLE hFind = OSFindFirstFile(strCurProfileDir + L"*.ini", ofd);
-
-    if (!hFind)
-    {
-        Log(L"Find failed for profile");
-        return;
-    }
-
-    String nextFile;
-
-    do
-    {
-        if (scmpi(ofd.fileName, strCurProfileFile) != 0)
-        {
-            nextFile = ofd.fileName;
-            break;
-        }
-    } while (OSFindNextFile(hFind, ofd));
-    OSFindClose(hFind);
-
-    if (nextFile.IsEmpty())
-        return;
-
-    String strConfirm = Str("Settings.General.ConfirmDelete");
-    strConfirm.FindReplace(TEXT("$1"), strCurProfile);
-    if (OBSMessageBox(hwndMain, strConfirm, Str("DeleteConfirm.Title"), MB_YESNO) == IDYES)
-    {
-        String strCurProfilePath;
-        strCurProfilePath << strCurProfileDir << strCurProfile << TEXT(".ini");
-        OSDeleteFile(strCurProfilePath);
-
-        GlobalConfig->SetString(L"General", L"Profile", GetPathWithoutExtension(nextFile));
-
-        strCurProfilePath.Clear();
-        strCurProfilePath << strCurProfileDir << nextFile;
-        if (!AppConfig->Open(strCurProfilePath))
-        {
-            OBSMessageBox(hwndMain, TEXT("Error - unable to open ini file"), NULL, 0);
-            return;
-        }
-
-        App->ReloadIniSettings();
-        App->ResetApplicationName();
-        App->ResetProfileMenu();
-    }
+void OBS::RemoveProfile(){
 }
 
-void OBS::ImportProfile()
-{
-    if (OBSMessageBox(hwndMain, Str("ImportProfileReplaceWarning.Text"), Str("ImportProfileReplaceWarning.Title"), MB_YESNO) == IDNO)
-        return;
-
-    TCHAR lpFile[MAX_PATH+1];
-    zero(lpFile, sizeof(lpFile));
-
-    OPENFILENAME ofn;
-    zero(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = lpFile;
-    ofn.hwndOwner = hwndMain;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFilter = TEXT("Profile Files (*.ini)\0*.ini\0");
-    ofn.nFilterIndex = 1;
-    ofn.lpstrInitialDir = GlobalConfig->GetString(L"General", L"LastImportExportPath");
-
-    TCHAR curDirectory[MAX_PATH+1];
-    GetCurrentDirectory(MAX_PATH, curDirectory);
-
-    BOOL bOpenFile = GetOpenFileName(&ofn);
-    SetCurrentDirectory(curDirectory);
-
-    if (!bOpenFile)
-        return;
-
-    if (GetPathExtension(lpFile).IsEmpty())
-        scat(lpFile, L".ini");
-
-    GlobalConfig->SetString(L"General", L"LastImportExportPath", GetPathDirectory(lpFile));
-
-    String strCurProfile = GlobalConfig->GetString(TEXT("General"), TEXT("Profile"));
-    String strCurProfileFile;
-    strCurProfileFile << lpAppDataPath << TEXT("\\profiles\\") << strCurProfile << L".ini";
-
-    CopyFile(lpFile, strCurProfileFile, false);
-
-    if(!AppConfig->Open(strCurProfileFile))
-    {
-        OBSMessageBox(hwndMain, TEXT("Error - unable to open ini file"), NULL, 0);
-        return;
-    }
-
-    App->ReloadIniSettings();
+void OBS::ImportProfile(){
 }
 
-void OBS::ExportProfile()
-{
-    TCHAR lpFile[MAX_PATH+1];
-    zero(lpFile, sizeof(lpFile));
-
-    OPENFILENAME ofn;
-    zero(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.lpstrFile = lpFile;
-    ofn.hwndOwner = hwndMain;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrFilter = TEXT("Profile Files (*.ini)\0*.ini\0");
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-    ofn.lpstrInitialDir = GlobalConfig->GetString(L"General", L"LastImportExportPath");
-
-    TCHAR curDirectory[MAX_PATH+1];
-    GetCurrentDirectory(MAX_PATH, curDirectory);
-
-    BOOL bSaveFile = GetSaveFileName(&ofn);
-    SetCurrentDirectory(curDirectory);
-
-    if (!bSaveFile)
-        return;
-
-    if (GetPathExtension(lpFile).IsEmpty())
-        scat(lpFile, L".ini");
-
-    String strCurProfile = GlobalConfig->GetString(TEXT("General"), TEXT("Profile"));
-    String strCurProfileFile;
-    strCurProfileFile << lpAppDataPath << TEXT("\\profiles\\") << strCurProfile << L".ini";
-
-    GlobalConfig->SetString(L"General", L"LastImportExportPath", GetPathDirectory(lpFile));
-
-    CopyFile(strCurProfileFile, lpFile,  false);
+void OBS::ExportProfile(){
 }
 
-
-//----------------------------
-
-void OBS::ResetSceneCollectionMenu()
-{
-    HMENU hmenuMain = GetMenu(hwndMain);
-    HMENU hmenuSceneCollection = GetSubMenu(hmenuMain, 3);
-    while (DeleteMenu(hmenuSceneCollection, 8, MF_BYPOSITION));
-    AddSceneCollectionToMenu(hmenuSceneCollection);
+void OBS::ResetSceneCollectionMenu(){
 }
 
-void OBS::ResetProfileMenu()
-{
-    HMENU hmenuMain = GetMenu(hwndMain);
-    HMENU hmenuProfiles = GetSubMenu(hmenuMain, 2);
-    while (DeleteMenu(hmenuProfiles, 8, MF_BYPOSITION));
-    AddProfilesToMenu(hmenuProfiles);
+void OBS::ResetProfileMenu(){
 }
 
-//----------------------------
-
-void OBS::DisableMenusWhileStreaming(bool disable)
-{
-    HMENU hmenuMain = GetMenu(hwndMain);
-
-    EnableMenuItem(hmenuMain, 2, (!disable ? MF_ENABLED : MF_DISABLED) | MF_BYPOSITION);
-    EnableMenuItem(hmenuMain, 3, (!disable ? MF_ENABLED : MF_DISABLED) | MF_BYPOSITION);
-
-    EnableMenuItem(hmenuMain, ID_HELP_UPLOAD_CURRENT_LOG, (!disable ? MF_ENABLED : MF_DISABLED));
-    EnableMenuItem(hmenuMain, ID_HELP_ANALYZE_CURRENT_LOG, (!disable ? MF_ENABLED : MF_DISABLED));
-
-    DrawMenuBar(hwndMain);
+void OBS::DisableMenusWhileStreaming(bool disable){
 }
 
-//----------------------------
-
-void LogUploadMonitorCallback()
-{
+void LogUploadMonitorCallback(){
     PostMessage(hwndMain, WM_COMMAND, MAKEWPARAM(ID_REFRESH_LOGS, 0), 0);
 }
 
-//----------------------------
-
-static HMENU FindParent(HMENU root, UINT id, String *name=nullptr)
-{
-    MENUITEMINFO info;
-    zero(&info, sizeof(info));
-    info.cbSize = sizeof(info);
-    info.fMask = MIIM_SUBMENU | (name ? MIIM_STRING : 0);
-
-    MENUITEMINFO verifier;
-    zero(&verifier, sizeof(verifier));
-    verifier.cbSize = sizeof(verifier);
-
-    bool found = false;
-
-    int count = GetMenuItemCount(root);
-    for (int i = 0; i < count; i++)
-    {
-        info.cch = 0;
-        if (!GetMenuItemInfo(root, i, true, &info))
-            continue;
-
-        if (!info.hSubMenu)
-            continue;
-
-        HMENU submenu = info.hSubMenu;
-        if (!GetMenuItemInfo(submenu, id, false, &verifier))
-            continue;
-
-        if (name)
-        {
-            name->SetLength(info.cch++);
-            info.dwTypeData = name->Array();
-            GetMenuItemInfo(root, i, true, &info);
-            info.dwTypeData = nullptr;
-        }
-
-        found = true;
-
-        root = submenu;
-        i = 0;
-        count = GetMenuItemCount(root);
-    }
-
-    return found ? root : nullptr;
+static HMENU FindParent(HMENU root, UINT id, String *name=nullptr){
+    return nullptr;
 }
 
-void OBS::ResetLogUploadMenu()
-{
-    String logfilePattern = FormattedString(L"%s/logs/*.log", OBSGetAppDataPath());
-
-    std::vector<decltype(App->logFiles.cbegin())> validLogs;
-
-    OSFindData ofd;
-    HANDLE finder;
-    if (!App->logDirectoryMonitor)
-    {
-        App->logDirectoryMonitor = OSMonitorDirectoryCallback(String(OBSGetAppDataPath()) << L"/logs/", LogUploadMonitorCallback);
-
-        if (!(finder = OSFindFirstFile(logfilePattern, ofd)))
-            return;
-
-        char *contents = (char*)Allocate(1024 * 8);
-
-        do
-        {
-            if (ofd.bDirectory) continue;
-
-            String filename = GetPathFileName(ofd.fileName, true);
-            auto iter = App->logFiles.emplace(filename.Array(), false).first;
-
-            XFile f(String(OBSGetAppDataPath()) << L"/logs/" << filename, XFILE_READ | XFILE_SHARED, XFILE_OPENEXISTING);
-            if (!f.IsOpen())
-                continue;
-
-            DWORD nRead = f.Read(contents, 1024*8 - 1);
-            contents[nRead] = 0;
-
-            bool validLog = (strstr(contents, "Open Broadcaster Software") != nullptr);
-
-            if (!validLog)
-                continue;
-
-            iter->second = true;
-            validLogs.push_back(iter);
-        } while (OSFindNextFile(finder, ofd));
-
-        Free(contents);
-    }
-    else
-    {
-        if (finder = OSFindFirstFile(logfilePattern, ofd))
-        {
-            auto previous = std::move(App->logFiles);
-
-            App->logFiles.clear();
-
-            do
-            {
-                if (ofd.bDirectory) continue;
-
-                std::wstring log = GetPathFileName(ofd.fileName, true);
-                if (previous.find(log) == previous.end())
-                    continue;
-
-                if (!(App->logFiles[log] = previous[log]))
-                    continue;
-
-                validLogs.push_back(App->logFiles.find(log));
-            } while (OSFindNextFile(finder, ofd));
-        }
-        else
-            App->logFiles.clear();
-    }
-
-    HMENU hmenuMain = GetMenu(hwndMain);
-    HMENU hmenuUpload = FindParent(hmenuMain, ID_HELP_UPLOAD_CURRENT_LOG);
-    if (!hmenuUpload)
-        return;
-
-    while (DeleteMenu(hmenuUpload, 2, MF_BYPOSITION));
-
-    if (validLogs.empty())
-        return;
-
-    AppendMenu(hmenuUpload, MF_SEPARATOR, 0, nullptr);
-
-    AppendMenu(hmenuUpload, MF_STRING, ID_UPLOAD_ANALYZE_LOG, Str("MainMenu.Help.AnalyzeLastLog"));
-    AppendMenu(hmenuUpload, MF_STRING, ID_UPLOAD_LOG, Str("MainMenu.Help.UploadLastLog"));
-
-    AppendMenu(hmenuUpload, MF_SEPARATOR, 0, nullptr);
-
-    unsigned i = 0;
-    for (auto iter = validLogs.rbegin(); iter != validLogs.rend(); i++, iter++)
-    {
-        HMENU items = CreateMenu();
-        AppendMenu(items, MF_STRING, ID_UPLOAD_ANALYZE_LOG + i, Str("LogUpload.Analyze"));
-        AppendMenu(items, MF_STRING, ID_UPLOAD_LOG + i, Str("LogUpload.Upload"));
-        AppendMenu(items, MF_STRING, ID_VIEW_LOG + i, Str("LogUpload.View"));
-
-        AppendMenu(hmenuUpload, MF_STRING | MF_POPUP, (UINT_PTR)items, (*iter)->first.c_str());
-    }
+void OBS::ResetLogUploadMenu(){
 }
 
-//----------------------------
-
-String GetLogUploadMenuItem(UINT item)
-{
-    HMENU hmenuMain = GetMenu(hwndMain);
-
-    String log;
-    FindParent(hmenuMain, item, &log);
-
-    return log;
+String GetLogUploadMenuItem(UINT item){
+    return String();
 }
-
-//----------------------------
 
 namespace
 {

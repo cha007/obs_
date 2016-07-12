@@ -85,7 +85,6 @@ void WINAPI ProcessEvents();
 #define VOL_MAX 0
 #define VOLN_METERED  0x302
 
-#include "../resource.h"
 #include "VolumeControl.h"
 #include "OBS.h"
 
