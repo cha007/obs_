@@ -316,7 +316,6 @@ BASE_EXPORT extern BOOL bDebugBreak;
 #include "XMath.h"
 #include "ConfigFile.h"
 #include "XFile.h"
-#include "Profiler.h"
 #include "XTLocalization.h"
 #include "XConfig.h"
 

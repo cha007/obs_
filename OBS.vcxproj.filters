@@ -82,9 +82,6 @@
     <ClInclude Include="OBSApi\Utility\Inline.h">
       <Filter>OBSApi\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="OBSApi\Utility\Profiler.h">
-      <Filter>OBSApi\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="OBSApi\Utility\RAIIHelpers.h">
       <Filter>OBSApi\Utility</Filter>
     </ClInclude>
@@ -217,9 +214,6 @@
       <Filter>OBSApi\Utility</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\Utility\FastAlloc.cpp">
-      <Filter>OBSApi\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="OBSApi\Utility\Profiler.cpp">
       <Filter>OBSApi\Utility</Filter>
     </ClCompile>
     <ClCompile Include="OBSApi\Utility\utf8-windows.cpp">

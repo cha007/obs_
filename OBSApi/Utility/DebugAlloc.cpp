@@ -20,13 +20,7 @@
 #include "XT.h"
 #include "malloc.h"
 
-
 //wow, this thing is horrible.  this thing is so horrible.  I seriously need to fix it.
-
-
-
-
-
 //-----------------------------------------
 //Allocation tracking struct
 struct Allocation
@@ -47,9 +41,7 @@ unsigned int dwAllocCurLine;
 TCHAR *       lpAllocCurFile;
 
 BOOL bEnableTracking = FALSE;
-
 int memoryBreakID;
-
 
 void EnableMemoryTracking(BOOL bEnable, int id)
 {
@@ -85,20 +77,6 @@ DebugAlloc::~DebugAlloc()
                 Log(TEXT("\tID: Track point was not enabled when allocation was made\r\n\tAddress: 0x%lX\r\n\tDeclared in file %s on line %d\r\n"), AllocationList[i].Address, AllocationList[i].lpFile, AllocationList[i].dwLine);
         }
         Log(TEXT("=========================================================\r\n"));
-
-        /*tsprintf_s(temp, 4095, TEXT("%d Memory leaks detected on exit!\r\n"), numAllocations);
-        LogFile.WriteStr(temp);
-
-        LogFile.WriteStr(TEXT("Allocation Tracking Results: Memory Leaks:\r\n=========================================================\r\n"));
-        for(DWORD i=0;i<numAllocations;i++)
-        {
-            if(AllocationList[i].allocationID != INVALID)
-                tsprintf_s(temp, 4095, TEXT("\tID: %d\r\n\tAddress: 0x%lX\r\n\tDeclared in file %s on line %d\r\n"), AllocationList[i].allocationID, AllocationList[i].Address, AllocationList[i].lpFile, AllocationList[i].dwLine);
-            else
-                tsprintf_s(temp, 4095, TEXT("\tID: Track point was not enabled when allocation was made\r\n\tAddress: 0x%lX\r\n\tDeclared in file %s on line %d\r\n"), AllocationList[i].Address, AllocationList[i].lpFile, AllocationList[i].dwLine);
-            LogFile.WriteStr(temp);
-        }
-        LogFile.WriteStr(TEXT("=========================================================\r\n"));*/
     }
 }
 

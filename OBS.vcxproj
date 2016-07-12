@@ -282,7 +282,6 @@
     <ClInclude Include="OBSApi\Utility\Defs.h" />
     <ClInclude Include="OBSApi\Utility\FastAlloc.h" />
     <ClInclude Include="OBSApi\Utility\Inline.h" />
-    <ClInclude Include="OBSApi\Utility\Profiler.h" />
     <ClInclude Include="OBSApi\Utility\RAIIHelpers.h" />
     <ClInclude Include="OBSApi\Utility\Serializer.h" />
     <ClInclude Include="OBSApi\Utility\Template.h" />
@@ -313,7 +312,6 @@
     <ClCompile Include="OBSApi\Utility\ConfigFile.cpp" />
     <ClCompile Include="OBSApi\Utility\DebugAlloc.cpp" />
     <ClCompile Include="OBSApi\Utility\FastAlloc.cpp" />
-    <ClCompile Include="OBSApi\Utility\Profiler.cpp" />
     <ClCompile Include="OBSApi\Utility\utf8-windows.cpp" />
     <ClCompile Include="OBSApi\Utility\XConfig.cpp" />
     <ClCompile Include="OBSApi\Utility\XFile_Windows.cpp" />

@@ -22,12 +22,8 @@
 
 typedef LPVOID (STDCALL* OBSCREATEPROC)(XElement*); //data
 typedef bool (STDCALL* OBSCONFIGPROC)(XElement*, bool); //element, bInitializing
-
 typedef void (STDCALL* OBSHOTKEYPROC)(DWORD, UPARAM, bool);
 
-#define HOTKEY_SHIFT    0x1
-#define HOTKEY_CONTROL  0x2
-#define HOTKEY_ALT      0x4
 
 enum StreamInfoPriority
 {

@@ -145,17 +145,15 @@ void LoadGlobalIni()
         GlobalConfig->SetInt(TEXT("General"), TEXT("MaxLogs"), 20);
     }
 }
+int test(HINSTANCE hInstance){
+	LPWSTR sceneCollection = NULL;
+	//------------------------------------------------------------
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
-    LPWSTR sceneCollection = NULL;
-    //------------------------------------------------------------
-
-    hinstMain = hInstance;
-    if(InitXT(NULL, TEXT("FastAlloc")))
-    {
-        InitSockets();
-        CoInitialize(0);
+	hinstMain = hInstance;
+	if (InitXT(NULL, TEXT("FastAlloc")))
+	{
+		InitSockets();
+		CoInitialize(0);
 
 		String strDirectory;
 		UINT dirSize = GetCurrentDirectory(0, 0);
@@ -172,22 +170,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		LoadGlobalIni();
 
-        AppConfig = new ConfigFile;
-        SetupIni(NULL);
-        
-        App = new OBS;
-        MSG msg;
-        while(GetMessage(&msg, NULL, 0, 0)){
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);           
-        }
-		
-        delete App;
-        delete AppConfig;
-        delete GlobalConfig;
-        TerminateSockets();
-    }
+		AppConfig = new ConfigFile;
+		SetupIni(NULL);
 
-    TerminateXT();
+		App = new OBS;
+		MSG msg;
+		while (GetMessage(&msg, NULL, 0, 0)){
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		delete App;
+		delete AppConfig;
+		delete GlobalConfig;
+		TerminateSockets();
+	}
+
+	TerminateXT();
+	return 0;
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+{
+	test(hInstance);
     return 0;
 }
