@@ -555,12 +555,8 @@ public:
         *max = App->micMax;
         *peak = App->micPeak;
     }
-
-    virtual void AddSettingsPane(SettingsPane *pane)    {App->AddSettingsPane(pane);}
-    virtual void RemoveSettingsPane(SettingsPane *pane) {App->RemoveSettingsPane(pane);}
-
-    virtual UINT GetSampleRateHz() const {return App->GetSampleRateHz();}
-    
+	
+    virtual UINT GetSampleRateHz() const {return App->GetSampleRateHz();}    
     virtual UINT GetCaptureFPS() const        {return App->captureFPS;}
     virtual UINT GetTotalFrames() const       {return App->network ? App->network->NumTotalVideoFrames() : 0;}
     virtual UINT GetFramesDropped() const     {return App->curFramesDropped;}

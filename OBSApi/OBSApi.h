@@ -93,7 +93,6 @@ BASE_EXPORT void MixAudio(float *bufferDest, float *bufferSrc, UINT totalFloats,
 #include <vector>
 
 #include "Scene.h"
-#include "SettingsPane.h"
 #include "APIInterface.h"
 #include "AudioFilter.h"
 #include "AudioSource.h"

@@ -157,23 +157,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         InitSockets();
         CoInitialize(0);
 
-        //get current working dir
-        {
-            String strDirectory;
-            UINT dirSize = GetCurrentDirectory(0, 0);
-            strDirectory.SetLength(dirSize);
-            GetCurrentDirectory(dirSize, strDirectory.Array());
-            scpy(lpAppPath, strDirectory);
+		String strDirectory;
+		UINT dirSize = GetCurrentDirectory(0, 0);
+		strDirectory.SetLength(dirSize);
+		GetCurrentDirectory(dirSize, strDirectory.Array());
+		scpy(lpAppPath, strDirectory);
 
-			TSTR lpAllocator = NULL;		
-			SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, lpAppDataPath);
-			scat_n(lpAppDataPath, TEXT("\\OBS"), 4);            
+		TSTR lpAllocator = NULL;
+		SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, lpAppDataPath);
+		scat_n(lpAppDataPath, TEXT("\\OBS"), 4);
 
-            if(!OSFileExists(lpAppDataPath) && !OSCreateDirectory(lpAppDataPath))
-                CrashError(TEXT("Couldn't create directory '%s'"), lpAppDataPath);
+		if (!OSFileExists(lpAppDataPath) && !OSCreateDirectory(lpAppDataPath))
+			CrashError(TEXT("Couldn't create directory '%s'"), lpAppDataPath);
 
-            LoadGlobalIni();
-        }
+		LoadGlobalIni();
 
         AppConfig = new ConfigFile;
         SetupIni(NULL);

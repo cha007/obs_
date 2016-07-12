@@ -22,7 +22,6 @@
 #pragma once
 
 class Scene;
-class SettingsPane;
 struct EncoderPicture;
 
 #define NUM_RENDER_BUFFERS 2
@@ -411,30 +410,6 @@ struct ColorDescription
 
 //----------------------------
 
-enum ItemModifyType
-{
-    ItemModifyType_None,
-    ItemModifyType_Move,
-    ItemModifyType_ScaleBottomLeft,
-    ItemModifyType_CropBottomLeft,
-    ItemModifyType_ScaleLeft,
-    ItemModifyType_CropLeft,
-    ItemModifyType_ScaleTopLeft,
-    ItemModifyType_CropTopLeft,
-    ItemModifyType_ScaleTop,
-    ItemModifyType_CropTop,
-    ItemModifyType_ScaleTopRight,
-    ItemModifyType_CropTopRight,
-    ItemModifyType_ScaleRight,
-    ItemModifyType_CropRight,
-    ItemModifyType_ScaleBottomRight,
-    ItemModifyType_CropBottomRight,
-    ItemModifyType_ScaleBottom,
-    ItemModifyType_CropBottom
-};
-
-//----------------------------
-
 struct SceneHotkeyInfo
 {
     DWORD hotkeyID;
@@ -589,9 +564,9 @@ public:
     void CheckSources();
     void SetSourceRender(CTSTR sourceName, bool render);
 
-    //---------------------------------------------------
-    // settings window
-	List<SettingsPane*> settingsPanes;
+//     //---------------------------------------------------
+//     // settings window
+// 	List<SettingsPane*> settingsPanes;
 
 	void   SetChangedSettings(bool bChanged){}
 	void   SetAbortApplySettings(bool abort){}
@@ -599,19 +574,12 @@ public:
 	void   ApplySettings(){}
 	void   SetCanOptimizeSettings(bool canOptimize){}
 	void   OptimizeSettings(){}
-
-    // Settings panes
-public:
-	void   AddSettingsPane(SettingsPane *pane){}
-	void   RemoveSettingsPane(SettingsPane *pane){}
-	void   AddEncoderSettingsPane(SettingsPane *pane){}
-	void   RemoveEncoderSettingsPane(SettingsPane *pane){}
-
+	
 private:
 	void   AddBuiltInSettingsPanes(){}
 	void   AddEncoderSettingsPanes(){}
 
-    friend class SettingsPane;
+    //friend class SettingsPane;
 
     //---------------------------------------------------
     // mainly manly main window stuff
@@ -663,7 +631,6 @@ private:
     bool    bRMouseDown;
     bool    bItemWasSelected;
     Vect2   startMousePos, lastMousePos;
-    ItemModifyType modifyType;
     SceneItem *scaleItem;
 
     HMENU           hmenuMain; // Main window menu so we can hide it in fullscreen mode

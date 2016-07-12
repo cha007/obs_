@@ -395,48 +395,6 @@ LRESULT CALLBACK OBS::OBSProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	return DefWindowProc(hwnd, message, wParam, lParam);;
 }
 
-ItemModifyType GetItemModifyType(const Vect2 &mousePos, const Vect2 &itemPos, const Vect2 &itemSize, const Vect4 &crop, const Vect2 &scaleVal)
-{
-    Vect2 lowerRight = itemPos+itemSize;
-    float epsilon = 10.0f;
-
-    Vect2 croppedItemPos = itemPos + Vect2(crop.x / scaleVal.x, crop.y / scaleVal.y);
-    Vect2 croppedLowerRight = lowerRight - Vect2(crop.w / scaleVal.x, crop.z / scaleVal.y);
-
-    if( mousePos.x < croppedItemPos.x    ||
-        mousePos.y < croppedItemPos.y    ||
-        mousePos.x > croppedLowerRight.x ||
-        mousePos.y > croppedLowerRight.y )
-    {
-        return ItemModifyType_None;
-    }    
-
-    // Corner sizing
-    if(mousePos.CloseTo(croppedItemPos, epsilon))
-        return ItemModifyType_ScaleTopLeft;
-    else if(mousePos.CloseTo(croppedLowerRight, epsilon))
-        return ItemModifyType_ScaleBottomRight;
-    else if(mousePos.CloseTo(Vect2(croppedLowerRight.x, croppedItemPos.y), epsilon))
-        return ItemModifyType_ScaleTopRight;
-    else if(mousePos.CloseTo(Vect2(croppedItemPos.x, croppedLowerRight.y), epsilon))
-        return ItemModifyType_ScaleBottomLeft;
-
-    epsilon = 4.0f;
-
-    // Edge sizing
-    if(CloseFloat(mousePos.x, croppedItemPos.x, epsilon))
-        return ItemModifyType_ScaleLeft;
-    else if(CloseFloat(mousePos.x, croppedLowerRight.x, epsilon))
-        return ItemModifyType_ScaleRight;
-    else if(CloseFloat(mousePos.y, croppedItemPos.y, epsilon))
-        return ItemModifyType_ScaleTop;
-    else if(CloseFloat(mousePos.y, croppedLowerRight.y, epsilon))
-        return ItemModifyType_ScaleBottom;
-
-
-    return ItemModifyType_Move;
-}
-
 /**
  * Maps a point in window coordinates to frame coordinates.
  */

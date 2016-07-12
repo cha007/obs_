@@ -275,7 +275,6 @@
     <ClInclude Include="OBSApi\AudioSource.h" />
     <ClInclude Include="OBSApi\OBSApi.h" />
     <ClInclude Include="OBSApi\Scene.h" />
-    <ClInclude Include="OBSApi\SettingsPane.h" />
     <ClInclude Include="OBSApi\Utility\Alloc.h" />
     <ClInclude Include="OBSApi\Utility\ComPtr.hpp" />
     <ClInclude Include="OBSApi\Utility\ConfigFile.h" />
@@ -311,7 +310,6 @@
     <ClCompile Include="OBSApi\AudioSource.cpp" />
     <ClCompile Include="OBSApi\OBSApi.cpp" />
     <ClCompile Include="OBSApi\Scene.cpp" />
-    <ClCompile Include="OBSApi\SettingsPane.cpp" />
     <ClCompile Include="OBSApi\Utility\ConfigFile.cpp" />
     <ClCompile Include="OBSApi\Utility\DebugAlloc.cpp" />
     <ClCompile Include="OBSApi\Utility\FastAlloc.cpp" />

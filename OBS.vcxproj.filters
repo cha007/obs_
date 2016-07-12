@@ -103,9 +103,6 @@
     <ClInclude Include="OBSApi\Utility\XFile.h">
       <Filter>OBSApi\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="OBSApi\SettingsPane.h">
-      <Filter>OBSApi</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -233,9 +230,6 @@
     </ClCompile>
     <ClCompile Include="OBSApi\Utility\XFile_Windows.cpp">
       <Filter>OBSApi\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="OBSApi\SettingsPane.cpp">
-      <Filter>OBSApi</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

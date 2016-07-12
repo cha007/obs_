@@ -44,11 +44,9 @@ class APIInterface
 {
     friend class OBS;
     friend class AudioSource;
-    friend class SettingsPane;
 
 public:
     virtual void Invalid03() const {}
-
     virtual ~APIInterface() {}
 
     virtual void EnterSceneMutex()=0;
@@ -151,10 +149,6 @@ public:
 
     virtual void GetCurDesktopVolumeStats(float *rms, float *max, float *peak) const=0;
     virtual void GetCurMicVolumeStats(float *rms, float *max, float *peak) const=0;
-
-    virtual void AddSettingsPane(SettingsPane *pane)=0;
-    virtual void RemoveSettingsPane(SettingsPane *pane)=0;
-
     virtual void SetChangedSettings(bool isModified)=0;
 
     virtual Vect2 GetRenderFrameOffset() const=0;       //get the render frame offset inside the control
@@ -332,10 +326,6 @@ BASE_EXPORT AudioSource* OBSGetMicAudioSource();
 BASE_EXPORT void OBSGetCurDesktopVolumeStats(float *rms, float *max, float *peak);
 BASE_EXPORT void OBSGetCurMicVolumeStats(float *rms, float *max, float *peak);
 
-BASE_EXPORT void OBSAddSettingsPane(SettingsPane *pane);
-BASE_EXPORT void OBSRemoveSettingsPane(SettingsPane *pane);
-
 /** gets API version.  version is formatted: 0xMMmm */
 BASE_EXPORT UINT OBSGetAPIVersion();
-
 BASE_EXPORT UINT OBSGetSampleRateHz();

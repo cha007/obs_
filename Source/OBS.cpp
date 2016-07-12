@@ -285,9 +285,6 @@ OBS::OBS()
     bDragResize = false;
 
      ReloadIniSettings();
-//     ResetProfileMenu();
-//     ResetSceneCollectionMenu();
-//     ResetLogUploadMenu();
 
     bAutoReconnect = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnect"), 1) != 0;
     reconnectTimeout = AppConfig->GetInt(TEXT("Publish"), TEXT("AutoReconnectTimeout"), 10);
@@ -329,25 +326,6 @@ OBS::~OBS()
     GetWindowPlacement(hwndMain, &placement);
     RECT rect = { 0 };
     GetWindowRect(hwndMain, &rect);
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("PosX"), rect.left);
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("PosY"), rect.top);
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("Width"),
-//             rect.right - rect.left -
-//             GetSystemMetrics(SM_CXSIZEFRAME) * 2);
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("Height"),
-//             rect.bottom - rect.top -
-//             GetSystemMetrics(SM_CYSIZEFRAME) * 2 - GetSystemMetrics(SM_CYCAPTION) - GetSystemMetrics(SM_CYMENU));
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("Maximized"), placement.showCmd == SW_SHOWMAXIMIZED ? 1 : 0);
-// 
-//     GlobalConfig->SetInt(L"General", L"1to1Preview", renderFrameIn1To1Mode);
-//     GlobalConfig->SetInt(L"General", L"AlwaysOnTop", App->bAlwaysOnTop);
-//     
-//     // Save control panel visibility
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("PanelVisibleWindowed"), bPanelVisibleWindowed ? 1 : 0);
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("PanelVisibleFullscreen"), bPanelVisibleFullscreen ? 1 : 0);
-// 
-//     // Save preview enabled/disabled state
-//     GlobalConfig->SetInt(TEXT("General"), TEXT("PreviewEnabled"), bRenderViewEnabled ? 1 : 0);
 
     scenesConfig.SaveTo(String() << lpAppDataPath << "\\scenes.xconfig");
     scenesConfig.Close(true);
@@ -379,9 +357,6 @@ OBS::~OBS()
 
     delete API;
     API = NULL;
-
-    for (UINT i=0; i<settingsPanes.Num(); i++)
-        delete settingsPanes[i];
 
     if(hHotkeyMutex)
         OSCloseMutex(hHotkeyMutex);
