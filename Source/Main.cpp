@@ -145,11 +145,10 @@ void LoadGlobalIni()
         GlobalConfig->SetInt(TEXT("General"), TEXT("MaxLogs"), 20);
     }
 }
-int test(HINSTANCE hInstance){
+int test(){
 	LPWSTR sceneCollection = NULL;
 	//------------------------------------------------------------
 
-	hinstMain = hInstance;
 	if (InitXT(NULL, TEXT("FastAlloc")))
 	{
 		InitSockets();
@@ -192,6 +191,6 @@ int test(HINSTANCE hInstance){
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	test(hInstance);
+	test();
     return 0;
 }
